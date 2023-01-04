@@ -12,9 +12,14 @@ from dbt.adapters.sql import SQLConnectionManager as connection_cls
 
 from dbt.logger import GLOBAL_LOGGER as logger
 
-from  pep249 import Connection
+from dbt.events import AdapterLogger
+
+import  pep249
 
 from typing import Optional, Tuple
+
+logger = AdapterLogger("Upsolver")
+
 
 @dataclass
 class UpsolverCredentials(Credentials):
@@ -75,14 +80,15 @@ class UpsolverConnectionManager(connection_cls):
         # credentials = connection.credentials
 
         try:
-            handle = Connection.connect(
+            logger.debug(f"Start open a connection {cls.__class__.__name__}")
+            handle = pep249.connection.connect(
                  api_url = connection.credentials.api_url,
                  token = connection.credentials.token)
+            logger.debug(f"Connection is already open {cls.__class__.__name__}")
             connection.state = "open"
             connection.handle = handle
         except Exception as e:
-            print('handle error')
-            print(str(e))
+            logger.debug(f"Connection error {str(e)}")
         return connection
         #pass
 
@@ -94,6 +100,7 @@ class UpsolverConnectionManager(connection_cls):
         that has items such as code, rows_affected,etc. can also just be a string ex. "OK"
         if your cursor does not offer rich metadata.
         """
+        logger.debug(f"Get_response method {cls.__class__.__name__}")
         # ## Example ##
         # return cursor.status_message
         pass
@@ -109,4 +116,5 @@ class UpsolverConnectionManager(connection_cls):
         # _, cursor = self.add_query(sql, "master")
         # res = cursor.fetchone()
         # logger.debug("Canceled query "{}": {}".format(connection_name, res))
+        logger.debug(f"Cancel method {cls.__class__.__name__}")
         pass
