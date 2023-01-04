@@ -11,7 +11,7 @@ from dbt.adapters.base import Credentials
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
 from dbt.logger import GLOBAL_LOGGER as logger
-import pep249
+import upsolver
 from typing import Optional, Tuple
 
 @dataclass
@@ -75,7 +75,7 @@ class UpsolverConnectionManager(connection_cls):
 
         try:
             logger.debug(f"Start open a connection {cls.__class__.__name__}")
-            handle = pep249.connection.connect(
+            handle = upsolver.connection.connect(
                  api_url = connection.credentials.api_url,
                  token = connection.credentials.token)
             logger.debug(f"Connection is already open {cls.__class__.__name__}")
