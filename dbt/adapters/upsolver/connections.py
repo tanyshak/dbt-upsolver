@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
+from types import TracebackType
 from dbt.exceptions import (
     InternalException,
     RuntimeException,
@@ -9,17 +10,9 @@ from dbt.exceptions import (
 from dbt.adapters.base import Credentials
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
-
 from dbt.logger import GLOBAL_LOGGER as logger
-
-from dbt.events import AdapterLogger
-
-import  pep249
-
+import pep249
 from typing import Optional, Tuple
-
-logger = AdapterLogger("Upsolver")
-
 
 @dataclass
 class UpsolverCredentials(Credentials):
@@ -62,9 +55,10 @@ class UpsolverConnectionManager(connection_cls):
         try:
             yield
         except Exception as e:
-            msg = str(e)
-
-            logger.debug("Upsolver error : {}".format(msg))
+            logger.error(f"Exception when running SQL: \"{sql}\"")
+            logger.exception(e)
+            logger.exception(e.with_traceback(None))
+            
 
     @classmethod
     def open(cls, connection):
@@ -87,10 +81,10 @@ class UpsolverConnectionManager(connection_cls):
             logger.debug(f"Connection is already open {cls.__class__.__name__}")
             connection.state = "open"
             connection.handle = handle
+            connection.handle.cursor().execute('select 42 as answer')
         except Exception as e:
-            logger.debug(f"Connection error {str(e)}")
+            logger.error(f"Connection error {str(e)}")
         return connection
-        #pass
 
     @classmethod
     def get_response(cls,cursor):

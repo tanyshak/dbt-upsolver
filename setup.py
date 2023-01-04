@@ -11,7 +11,7 @@ setup(
     version=package_version,
     description=description,
     long_description=description,
-    author="tetiana_shemet",
+    author="Tetiana Shemet",
     author_email="tatiana.shemet@nestlogic.com",
     url="If you have already made a github repo to tie the project to place it here, otherwise update in setup.py later.",
     packages=find_namespace_packages(include=["dbt", "dbt.*"]),
