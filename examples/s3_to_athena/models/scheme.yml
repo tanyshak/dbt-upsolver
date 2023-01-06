@@ -1,0 +1,28 @@
+
+models:
+  - name: s3_connection
+    description: 's3 connection'
+    materialized: 'connection'
+      aws_role: 'arn:aws:iam::949275490180:role/upsolver_samples_role'
+      external_id: 'SAMPLES'
+      read_only: 'true'
+
+
+  - name: orders_row_data
+    description: 'Job to pour data to orders_row_data table'
+    materialized: 'sync_job'
+      job_name: 'load_orders_raw_data_from_s3'
+      content_type: 'JSON'
+      bucket = 'upsolver-samples'
+      prefix = 'orders/'
+
+
+  name: orders_transformed_data
+    description: 'Job to pour data to atheta'
+    materialized: 'sync_job'
+      job_name: 'transform_orders_and_insert_into_athena'
+      start_from: 'BEGINNING'
+      add_missing_columns: 'true'
+      run_interval: '1 MINUTE'
+      partitioned_by: 'p'artition_date'
+      map: 'MAP_COLUMNS_BY_NAME'

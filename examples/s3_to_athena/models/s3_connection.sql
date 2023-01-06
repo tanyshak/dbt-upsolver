@@ -1,0 +1,1 @@
+CREATE S3 CONNECTION {{ this }}
