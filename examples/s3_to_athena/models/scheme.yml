@@ -10,20 +10,23 @@ models:
 
   - name: orders_row_data
     description: 'Job to pour data to orders_row_data table'
+    partitioned_by: '$event_date'
     materialized: 'sync_job'
       job_name: 'load_orders_raw_data_from_s3'
-      content_type: 'JSON'
-      bucket: 'upsolver-samples'
-      prefix: 'orders/'
-      partitioned_by: '$event_date'
+        job_type: 'COPY'
+        content_type: 'JSON'
+      scource: 'S3'
+        bucket: 'upsolver-samples'
+        prefix: 'orders/'
 
 
   name: orders_transformed_data
     description: 'Job to pour data to atheta'
+    partitioned_by: 'partition_date'
     materialized: 'sync_job'
       job_name: 'transform_orders_and_insert_into_athena'
-      start_from: 'BEGINNING'
-      add_missing_columns: 'true'
-      run_interval: '1 MINUTE'
-      partitioned_by: 'partition_date'
-      map_columns_by_name: 'true'
+        job_type: 'INSERT'
+        start_from: 'BEGINNING'
+        add_missing_columns: 'true'
+        run_interval: '1 MINUTE'
+        map_columns_by_name: 'true'
