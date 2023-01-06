@@ -13,8 +13,9 @@ models:
     materialized: 'sync_job'
       job_name: 'load_orders_raw_data_from_s3'
       content_type: 'JSON'
-      bucket = 'upsolver-samples'
-      prefix = 'orders/'
+      bucket: 'upsolver-samples'
+      prefix: 'orders/'
+      partitioned_by: '$event_date'
 
 
   name: orders_transformed_data
@@ -24,5 +25,5 @@ models:
       start_from: 'BEGINNING'
       add_missing_columns: 'true'
       run_interval: '1 MINUTE'
-      partitioned_by: 'p'artition_date'
-      map: 'MAP_COLUMNS_BY_NAME'
+      partitioned_by: 'partition_date'
+      map_columns_by_name: 'true'
