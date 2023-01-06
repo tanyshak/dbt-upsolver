@@ -1,14 +1,3 @@
-SELECT
-  orderid AS order_id,
-  MD5(customer.email) AS customer_id,
-  customer_name,
-  nettotal AS total,
-  $event_time AS partition_date
-FROM {{ ref(‘orders_row_data’) }}
-LET customer_name = customer.firstname || ' ' || customer.lastname
-WHERE ordertype = 'SHIPPING'
-AND $event_time BETWEEN run_start_time() AND run_end_time();
-
 /*
 -- 5. Create an output table in AWS Glue Data Catalog. The table will be accessible in Athena once data has been added.
 
@@ -33,3 +22,14 @@ CREATE SYNC JOB transform_orders_and_insert_into_athena
     WHERE ordertype = 'SHIPPING'
     AND $event_time BETWEEN run_start_time() AND run_end_time();
 */
+
+SELECT
+  orderid AS order_id,
+  MD5(customer.email) AS customer_id,
+  customer_name,
+  nettotal AS total,
+  $event_time AS partition_date
+FROM {{ ref(‘orders_row_data’) }}
+LET customer_name = customer.firstname || ' ' || customer.lastname
+WHERE ordertype = 'SHIPPING'
+AND $event_time BETWEEN run_start_time() AND run_end_time();

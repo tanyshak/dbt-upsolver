@@ -1,5 +1,3 @@
-CREATE CONNECTION {{ this }}
-
 /*
 -- 1. Create a connection to SQLake sample data source.
 CREATE S3 CONNECTION upsolver_s3_samples
@@ -7,3 +5,5 @@ CREATE S3 CONNECTION upsolver_s3_samples
     EXTERNAL_ID = 'SAMPLES'
     READ_ONLY = TRUE;
 */
+
+CREATE CONNECTION {{ this }}

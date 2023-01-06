@@ -12,7 +12,7 @@ models:
   - name: orders_row_data
     description: 'Job to pour data to orders_row_data table'
     partitioned_by: '$event_date'
-    materialized: 'sync_job'
+    materialized: 'job'
       job_name: 'load_orders_raw_data_from_s3'
         job_type: 'COPY'
         content_type: 'JSON'
@@ -24,7 +24,7 @@ models:
   name: orders_transformed_data
     description: 'Job to pour data to atheta'
     partitioned_by: 'partition_date'
-    materialized: 'sync_job'
+    materialized: 'job'
       job_name: 'transform_orders_and_insert_into_athena'
         job_type: 'INSERT'
         start_from: 'BEGINNING'
