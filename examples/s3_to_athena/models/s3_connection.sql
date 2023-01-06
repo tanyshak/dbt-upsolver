@@ -1,4 +1,4 @@
-CREATE S3 CONNECTION {{ this }}
+CREATE CONNECTION {{ this }}
 
 /*
 -- 1. Create a connection to SQLake sample data source.

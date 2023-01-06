@@ -3,6 +3,7 @@ models:
   - name: s3_connection
     description: 's3 connection'
     materialized: 'connection'
+      source: 's3'
       aws_role: 'arn:aws:iam::949275490180:role/upsolver_samples_role'
       external_id: 'SAMPLES'
       read_only: 'true'
