@@ -1,11 +1,10 @@
-
 models:
   - name: s3_connection
     description: s3 connection
     materialized: connection
     connection_properties:
-      source: s3
-      aws_role: 'arn:aws:iam::949275490180:role/upsolver_samples_role'
+      source: S3
+      aws_role: arn:aws:iam::949275490180:role/upsolver_samples_role
       external_id: SAMPLES
       read_only: true
 
@@ -23,13 +22,30 @@ models:
         bucket: upsolver-samples
         prefix: orders/
 
+  - name: sales_info_raw_data
+    description: Job to pour data to sales_info_raw_data table
+    partitioned_by: $event_date
+    materialized: job
+    job_properties:
+      job_name: load_sales_info_raw_data_from_s3
+      job_type: COPY
+      content_type: JSON
+      source: S3
+      source_properties:
+        bucket: upsolver-samples
+        prefix: sales_info/
 
-  name: orders_transformed_data
+  name: physical_store_orders_materialized_view
+    description: View to aggregate the last sales interaction for each order
+    materialized: view
+
+
+  name: joined_orders_transformed_data
     description: Job to pour data to atheta
     partitioned_by: partition_date
     materialized: job
     job_properties:
-      job_name: transform_orders_and_insert_into_athena
+      job_name: Join the orders data with the sales data in our Materialized View
       job_type: INSERT
       start_from: BEGINNING
       add_missing_columns: true

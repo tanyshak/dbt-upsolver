@@ -6,4 +6,4 @@ CREATE POSTGRES CONNECTION upsolver_postgres_samples
     PASSWORD = 'your_password';
 */
 
-CREATE POSTGRES CONNECTION {{ this }}
+CREATE CONNECTION {{ this }}

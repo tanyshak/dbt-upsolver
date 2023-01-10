@@ -1,36 +1,40 @@
 models:
   - name: pg_connection
-    description: 'postgres connection'
-    materialized: 'connection'
-      source: 'postgres'
-      connection_string: 'jdbc:postgresql://host:5432/schema_name'
-      user_name: 'your_user_name'
-      password: 'your_password'
-      
+    description: postgres connection
+    materialized: connection
+      source: postgres
+      source_properties:
+        connection_string: 'jdbc:postgresql://host:5432/schema_name'
+        user_name: your_user_name
+        password: your_password
 
-  - name: postgres_row_data
+
+  - name: postgres_raw_data
     description: >
-              'Create a streaming job to ingest data from the sample
-              database into the staging table'
-    partitioned_by: '$event_date'
-    materialized: 'job'
-      job_name: 'load_raw_data_from_postgres'
-        job_type: 'COPY'
-        publication_name: 'your_publiction_name'
-      scource: 'POSTGRES'
+              Create a streaming job to ingest data from the sample
+              database into the staging table
+    partitioned_by: $event_date
+    materialized: job
+    job_properties:
+      job_name: load_raw_data_from_postgres
+      job_type: COPY
+      publication_name: your_publiction_name
+      source: postgres
+      source_properties:
         table_include_list: ('your_table_name')
 
 
   name: postgres_transformed_data
     description: >
-                'Create a streaming job to read from the staging table,
+                Create a streaming job to read from the staging table,
                 apply business logic transformations and insert the results
-                into the output table.'
-    partitioned_by: 'partition_date'
-    materialized: 'job'
-      job_name: 'transform_and_insert_into_athena'
-        job_type: 'INSERT'
-        start_from: 'BEGINNING'
-        add_missing_columns: 'true'
-        run_interval: '1 MINUTE'
-        map_columns_by_name: 'true'
+                into the output table.
+    partitioned_by: partition_date
+    materialized: job
+    job_properties:
+      job_name: transform_and_insert_into_athena
+      job_type: INSERT
+      start_from: BEGINNING
+      add_missing_columns: true
+      run_interval: 1 MINUTE
+      map_columns_by_name: true

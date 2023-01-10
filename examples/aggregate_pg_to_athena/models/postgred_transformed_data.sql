@@ -26,7 +26,7 @@ SELECT
   COL1,
   SUM(COL2) as sum_column2,
   MAX(COL3) as max_column3,
-  LAST(COL4) as last_column4  
-FROM {{ ref(‘postgres_row_data’) }}
+  LAST(COL4) as last_column4
+FROM {{ ref(‘postgres_raw_data’) }}
 WHERE $event_time BETWEEN run_start_time() AND run_end_time()
 GROUP BY 1, 2;
