@@ -20,5 +20,5 @@ SELECT orderid,
    LAST(saleinfo.store.servicedby.employeeid) as employeeid,
    LAST(saleinfo.store.servicedby.firstname) as firstname,
    LAST(saleinfo.store.servicedby.lastname) as lastname
-FROM {{ ref(‘sales_info_raw_data’) }}
+FROM {{ ref('sales_info_raw_data') }}
 GROUP BY orderid;

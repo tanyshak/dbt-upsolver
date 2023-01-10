@@ -14,4 +14,4 @@ CREATE JOB load_orders_raw_data_from_s3
 
 SELECT *
 FROM
-  {{ ref(‘s3_connection’) }}
+  {{ ref('s3_connection') }}

@@ -16,4 +16,4 @@ CREATE TABLE default_glue_catalog.database_16e61b.sales_info_raw_data()
 
 SELECT *
 FROM
-  {{ ref(‘s3_connection’) }}
+  {{ ref('s3_connection') }}

@@ -1,9 +1,10 @@
+version: 2
 models:
   - name: pg_connection
     description: postgres connection
     materialized: connection
-      source: postgres
-      source_properties:
+    source: postgres
+    source_properties:
         connection_string: 'jdbc:postgresql://host:5432/schema_name'
         user_name: your_user_name
         password: your_password
@@ -24,8 +25,8 @@ models:
         table_include_list: ('your_table_name')
 
 
-  name: postgres_transformed_data
-    description: >
+  - name: postgres_transformed_data
+    description: |
                 Create a streaming job to read from the staging table,
                 apply business logic transformations and insert the results
                 into the output table.

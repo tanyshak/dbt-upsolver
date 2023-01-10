@@ -27,8 +27,8 @@ SELECT
    mv.employeeid AS employeeid,
    mv.firstname AS firstname,
    mv.lastname AS lastname
-FROM {{ ref(‘orders_raw_data’) }} as s
-LEFT JOIN {{ ref(‘physical_store_orders_materialized_view’) }} AS mv
+FROM {{ ref('orders_raw_data') }} as s
+LEFT JOIN {{ ref('physical_store_orders_materialized_view') }} AS mv
 ON mv.orderid = s.orderid
 WHERE mv.source = 'Store'
 AND $commit_time between run_start_time() AND run_end_time();

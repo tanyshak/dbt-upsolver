@@ -13,4 +13,4 @@ CREATE JOB load_raw_data_from_postgres
 
 SELECT *
 FROM
-  {{ ref(‘pg_connection’) }}
+  {{ ref('pg_connection') }}

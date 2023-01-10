@@ -1,3 +1,4 @@
+version: 2
 
 models:
   - name: s3_connection
@@ -24,7 +25,7 @@ models:
         prefix: orders/
 
 
-  name: orders_transformed_data
+  - name: orders_transformed_data
     description: Job to pour data to atheta
     partitioned_by: partition_date
     materialized: job

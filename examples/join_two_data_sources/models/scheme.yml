@@ -1,3 +1,5 @@
+version: 2
+
 models:
   - name: s3_connection
     description: s3 connection
@@ -35,12 +37,12 @@ models:
         bucket: upsolver-samples
         prefix: sales_info/
 
-  name: physical_store_orders_materialized_view
+  - name: physical_store_orders_materialized_view
     description: View to aggregate the last sales interaction for each order
-    materialized: view
+    materialized: materialized view
 
 
-  name: joined_orders_transformed_data
+  - name: joined_orders_transformed_data
     description: Job to pour data to atheta
     partitioned_by: partition_date
     materialized: job
