@@ -5,7 +5,7 @@ Upsolver sample data project transformed to dbt project
 <p>
 
 ```yml
-s3_to_athena:
+<project name>:
   outputs:
     dev:
       database: database_16e61b
