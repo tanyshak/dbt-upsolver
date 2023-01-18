@@ -1,17 +1,17 @@
 fixed:
   type: upsolver
 prompts:
-  host:
-    hint: "your host name"
-  port:
-    default: 5432
-    type: "int"
+  api_url:
+    hint: "your api_url"
+    default: "https://mt-api-prod.upsolver.com"
+  token:
+    hint: "your token"
   user:
     hint: "dev username"
-  password:
+  catalog:
     hint: "dev password"
-    hide_input: true
-  dbname:
+    default: "default_glue_catalog"
+  database:
     hint: "default database"
   threads:
     hint: "1 or more"
