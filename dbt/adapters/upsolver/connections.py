@@ -10,9 +10,12 @@ from dbt.exceptions import (
 from dbt.adapters.base import Credentials
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
-from dbt.logger import GLOBAL_LOGGER as logger
+#rom dbt.logger import GLOBAL_LOGGER as logger
 import upsolver
 from typing import Optional, Tuple
+from dbt.events import AdapterLogger
+
+logger = AdapterLogger("Upsolver")
 
 @dataclass
 class UpsolverCredentials(Credentials):
@@ -22,7 +25,12 @@ class UpsolverCredentials(Credentials):
     """
 
     token: str
-    api_url: Optional[str] = 'https://mt-api-prod.upsolver.com/'
+    api_url: str
+    schema: str
+    database: str
+
+
+    _ALIASES = {"dbname": "database", "catalog": "schema"}
 
     @property
     def type(self):
@@ -40,7 +48,7 @@ class UpsolverCredentials(Credentials):
         """
         List of keys to display in the `dbt debug` output.
         """
-        return ("token", "api_url")
+        return ("token", "api_url", "catalog", "schema")
 
 class UpsolverConnectionManager(connection_cls):
     TYPE = "upsolver"
@@ -58,7 +66,7 @@ class UpsolverConnectionManager(connection_cls):
             logger.error(f"Exception when running SQL: \"{sql}\"")
             logger.exception(e)
             logger.exception(e.with_traceback(None))
-            
+
 
     @classmethod
     def open(cls, connection):
@@ -66,24 +74,25 @@ class UpsolverConnectionManager(connection_cls):
         Receives a connection object and a Credentials object
         and moves it to the "open" state.
         """
-        # ## Example ##
-        # if connection.state == "open":
-        #     logger.debug("Connection is already open, skipping open.")
-        #     return connection
 
-        # credentials = connection.credentials
+        if connection.state == "open":
+            logger.debug("Connection is already open, skipping open.")
+            return connection
+
+        credentials = connection.credentials
 
         try:
             logger.debug(f"Start open a connection {cls.__class__.__name__}")
             handle = upsolver.connection.connect(
-                 api_url = connection.credentials.api_url,
-                 token = connection.credentials.token)
+                 api_url = credentials.api_url,
+                 token = credentials.token)
             logger.debug(f"Connection is already open {cls.__class__.__name__}")
+            logger.debug(f"Credentials: {credentials}")
             connection.state = "open"
             connection.handle = handle
-            connection.handle.cursor().execute('select 42 as answer')
         except Exception as e:
             logger.error(f"Connection error {str(e)}")
+        logger.debug(f"Connection: {connection}")
         return connection
 
     @classmethod
