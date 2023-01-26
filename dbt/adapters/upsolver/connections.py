@@ -8,14 +8,24 @@ from dbt.exceptions import (
     DatabaseException,
 )
 from dbt.adapters.base import Credentials
+from dbt.contracts.connection import AdapterResponse
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
 #rom dbt.logger import GLOBAL_LOGGER as logger
 import upsolver
 from typing import Optional, Tuple
 from dbt.events import AdapterLogger
+import dbt
+
+from dbt.contracts.connection import Connection, ConnectionState, AdapterResponse
+import agate
+import dbt.clients.agate_helper
 
 logger = AdapterLogger("Upsolver")
+
+@dataclass
+class UpsolverAdapterResponse(AdapterResponse):
+    query_id: str = ""
 
 @dataclass
 class UpsolverCredentials(Credentials):
@@ -26,11 +36,10 @@ class UpsolverCredentials(Credentials):
 
     token: str
     api_url: str
-    schema: str
     database: str
 
 
-    _ALIASES = {"dbname": "database", "catalog": "schema"}
+    #_ALIASES = {"dbname": "database", "schema": "database"}
 
     @property
     def type(self):
@@ -48,7 +57,7 @@ class UpsolverCredentials(Credentials):
         """
         List of keys to display in the `dbt debug` output.
         """
-        return ("token", "api_url", "catalog", "schema")
+        return ("token", "api_url", "database")
 
 class UpsolverConnectionManager(connection_cls):
     TYPE = "upsolver"
@@ -66,7 +75,7 @@ class UpsolverConnectionManager(connection_cls):
             logger.error(f"Exception when running SQL: \"{sql}\"")
             logger.exception(e)
             logger.exception(e.with_traceback(None))
-
+            raise dbt.exceptions.DatabaseException(str(e))
 
     @classmethod
     def open(cls, connection):
@@ -95,7 +104,7 @@ class UpsolverConnectionManager(connection_cls):
         logger.debug(f"Connection: {connection}")
         return connection
 
-    @classmethod
+#    @classmethod
     def get_response(cls,cursor):
         """
         Gets a cursor object and returns adapter-specific information
@@ -104,9 +113,47 @@ class UpsolverConnectionManager(connection_cls):
         if your cursor does not offer rich metadata.
         """
         logger.debug(f"Get_response method {cls.__class__.__name__}")
-        # ## Example ##
-        # return cursor.status_message
-        pass
+
+        code =  "OK" # cursor.sqlstate
+        rows = 1 #cursor.rowcount
+        status_message = f"{code} {rows}"
+        return AdapterResponse(
+            _message=status_message,
+            code=code,
+            rows_affected=rows
+        )
+
+    def get_res(self,cursor):
+        return cursor.fetchmany()
+
+    #def execute(self, sql, auto_begin=False, fetch=False):
+        #logger.debug(f"Start execute")
+        #_, cursor = self.add_query(sql, auto_begin)
+        #status = self.get_response(cursor)
+        #logger.debug(f"Fetch one: {get_res(cursor)}")
+        #logger.debug(f"result_from_cursor")
+        #table = self.get_result_from_cursor(cursor)
+        #logger.debug(f"Results: {table}")
+
+        #return status, table
+
+    def execute(
+        self, sql: str, auto_begin: bool = False, fetch: bool = False
+    ) -> Tuple[AdapterResponse, agate.Table]:
+        logger.debug(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        logger.debug(f"@@@@@Start execute SQL @@@@: {sql}")
+        sql = self._add_query_comment(sql)
+        _, cursor = self.add_query(sql, auto_begin)
+        response = self.get_response(cursor)
+        if fetch:
+            table = self.get_result_from_cursor(cursor)
+        else:
+            table = dbt.clients.agate_helper.empty_table()
+        logger.debug(f"Responce: {response}")
+        logger.debug(f"table: {table}")
+        logger.debug(f"fetchmany: {self.get_res(cursor)}")
+        logger.debug(f"get_response: {self.get_response(cursor)}")
+        return response, table
 
     def cancel(self, connection):
         """
@@ -119,5 +166,19 @@ class UpsolverConnectionManager(connection_cls):
         # _, cursor = self.add_query(sql, "master")
         # res = cursor.fetchone()
         # logger.debug("Canceled query "{}": {}".format(connection_name, res))
-        logger.debug(f"Cancel method {cls.__class__.__name__}")
+        logger.debug(f"Cancel method {connection}")
+
+    def add_begin_query(self, *args, **kwargs):
+        pass
+
+    def add_commit_query(self, *args, **kwargs):
+        pass
+
+    def begin(self):
+        pass
+
+    def commit(self):
+        pass
+
+    def clear_transaction(self):
         pass

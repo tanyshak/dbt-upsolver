@@ -1,5 +1,4 @@
 version: 2
 
 models:
-  - name: test_create_row_data
-    materialized: table
+  - name: upsolver_s3_try

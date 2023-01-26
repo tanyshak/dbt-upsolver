@@ -8,9 +8,6 @@ prompts:
     hint: "your token"
   user:
     hint: "dev username"
-  catalog:
-    hint: "dev password"
-    default: "default_glue_catalog"
   database:
     hint: "default database"
   threads:

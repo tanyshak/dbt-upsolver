@@ -35,4 +35,3 @@ models:
   test_connection:
     +schema: database_16e61b
     +database: default_glue_catalog
-    +materialized: table

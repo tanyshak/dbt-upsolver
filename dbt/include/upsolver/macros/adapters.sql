@@ -13,13 +13,11 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 */
 {% endmacro %}
 
-{% macro upsolver__check_schema_exists(information_schema,schema) -%}
+{macro upsolver__check_schema_exists(information_schema,schema) -%}
 '''Checks if schema name exists and returns number or times it shows up.'''
-/*
-    1. Check if schemas exist
-    2. return number of rows or columns that match searched parameter
-*/
+  {{ print('Checks if schema name exists') }}
 {% endmacro %}
+
 
 --  Example from postgres adapter in dbt-core
 --  Notice how you can build out other methods than the designated ones for the impl.py file,
@@ -34,12 +32,9 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
      create schema if not exists {{ relation.without_identifier().include(database=False) }}
    {%- endcall -%}
  {% endmacro %}
- 
+
 */
 
-{% macro upsolver__create_schema(relation) -%}
-'''Creates a new schema in the  target database, if schema already exists, method is a no-op. '''
-{% endmacro %}
 
 /*
 
@@ -56,10 +51,11 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 
 {% macro upsolver__drop_relation(relation) -%}
 '''Deletes relatonship identifer between tables.'''
-/*
-  1. If database exists
-  2. Create a new schema if passed schema does not exist already
-*/
+  {% call statement('drop_relation') -%}
+
+  drop connection {{ relation.identifier }}
+
+  {%- endcall %}
 {% endmacro %}
 
 {% macro upsolver__drop_schema(relation) -%}
@@ -136,6 +132,8 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 
 {% macro upsolver__list_relations_without_caching(schema_relation) -%}
 '''creates a table of relations withough using local caching.'''
+'''TODO add upsolver relations list'''
+
 {% endmacro %}
 
 {% macro upsolver__list_schemas(database) -%}
@@ -176,3 +174,7 @@ Example 3 of 3 of required macros that does not have a default implementation.
 '''Returns current UTC time'''
 {# docs show not to be implemented currently. #}
 {% endmacro %}
+
+{% macro upsolver__create_arbitrary_object(sql) -%}
+    {{ sql }}
+{%- endmacro %}
