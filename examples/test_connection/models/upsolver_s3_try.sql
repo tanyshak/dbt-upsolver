@@ -1,6 +1,6 @@
 /*
 There are 3 design way:
-1. Run query as it is in upsolver
+1. Run query as it is  upsolver way
 
 CREATE S3 CONNECTION upsolver_s3_samples_try
     AWS_ROLE = 'arn:aws:iam::949275490180:role/upsolver_samples_role'
