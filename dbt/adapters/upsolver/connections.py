@@ -37,6 +37,7 @@ class UpsolverCredentials(Credentials):
     token: str
     api_url: str
     database: str
+    schema: str
 
 
     #_ALIASES = {"dbname": "database", "schema": "database"}
@@ -57,7 +58,7 @@ class UpsolverCredentials(Credentials):
         """
         List of keys to display in the `dbt debug` output.
         """
-        return ("token", "api_url", "database")
+        return ("token", "api_url", "database", "schema")
 
 class UpsolverConnectionManager(connection_cls):
     TYPE = "upsolver"

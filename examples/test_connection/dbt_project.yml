@@ -33,5 +33,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   test_connection:
-    +schema: database_16e61b
+    +schema: 16e61b
     +database: default_glue_catalog

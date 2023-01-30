@@ -10,6 +10,8 @@ prompts:
     hint: "dev username"
   database:
     hint: "default database"
+  schema:
+    hint: "default schema"
   threads:
     hint: "1 or more"
     type: "int"
