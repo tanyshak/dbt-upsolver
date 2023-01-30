@@ -19,7 +19,7 @@ class UpsolverRelationType(StrEnum):
     Connection = "connection"
     MaterializedView = "materializedview"
     Job = "job"
-
+    Uptable = "uptable"
 
 @dataclass(frozen=True, eq=False, repr=False)
 class UpsolverRelation(BaseRelation):
