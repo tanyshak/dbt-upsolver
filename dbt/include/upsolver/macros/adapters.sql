@@ -52,9 +52,7 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 {% macro upsolver__drop_relation(relation) -%}
 '''Deletes relatonship identifer between tables.'''
   {% call statement('drop_relation') -%}
-
-  drop connection {{ relation.identifier }}
-
+    drop materialized view {{ relation }}
   {%- endcall %}
 {% endmacro %}
 
