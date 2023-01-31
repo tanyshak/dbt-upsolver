@@ -10,15 +10,12 @@ from dbt.utils import classproperty
 
 class UpsolverRelationType(StrEnum):
     # Built-in materialization types.
-    Table = "table"
     View = "view"
-    CTE = "cte"
-    External = "external"
 
     # Materialize-specific materialization types.
+    Job = "job"
     Connection = "connection"
     MaterializedView = "materializedview"
-    Job = "job"
     Uptable = "uptable"
 
 @dataclass(frozen=True, eq=False, repr=False)

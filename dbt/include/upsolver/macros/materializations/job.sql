@@ -1,8 +1,11 @@
-
-{% materialization connection, adapter='upsolver' %}
+{% materialization job, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% set connection_type = config.require('connection_type') %}
+  {% if config.get('sync', none) %}
+    {% set sync = SYNC %}
+  {% else %}
+    {% set sync = '' %}
+  {% endif %}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -10,7 +13,7 @@
   {%- set target_relation = api.Relation.create(identifier=identifier,
                                                 schema=schema,
                                                 database=database,
-                                                type="connection") -%}
+                                                type="job") -%}
 
   {% if old_relation %}
     {{ adapter.drop_relation(old_relation) }}
@@ -21,7 +24,7 @@
 
   {% call statement('main') -%}
 
-    CREATE {{ connection_type }} CONNECTION {{target_relation.identifier}}
+    CREATE {{ sync }} JOB {{target_relation.identifier}}
       {{ sql }}
 
   {%- endcall %}

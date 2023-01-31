@@ -15,11 +15,10 @@ CREATE S3 CONNECTION upsolver_s3_samples_try
 
 {{ config(
             materialized='connection',
-            connection_type="S3",
-            aws_role='arn:aws:iam::949275490180:role/upsolver_samples_role',
-            external_id='SAMPLES',
-            read_only= True
+            connection_type="S3"
         )
 }}
 
-CREATE CONNECTION
+AWS_ROLE = 'arn:aws:iam::949275490180:role/upsolver_samples_role'
+EXTERNAL_ID = 'SAMPLES'
+READ_ONLY = TRUE;

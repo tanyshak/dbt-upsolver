@@ -1,7 +1,7 @@
 {% materialization materializedview, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% if config.get('sync') %}
+  {% if config.get('sync', none) %}
     {% set sync = SYNC %}
   {% else %}
     {% set sync = '' %}
