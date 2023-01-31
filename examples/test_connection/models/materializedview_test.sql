@@ -1,5 +1,5 @@
-{{ config( materialized='materializedview', sync=True) }}
+{{ config( materialized='materializedview', sync=True ) }}
 
-SELECT orderid
-  FROM default_glue_catalog.database_16e61b.orders_raw_data
-GROUP BY orderid;
+SELECT partition_date
+  FROM {{ ref('uptable_test2')}}
+GROUP BY partition_date;

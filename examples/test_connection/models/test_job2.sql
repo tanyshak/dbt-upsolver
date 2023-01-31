@@ -1,4 +1,4 @@
-{{ config( materialized='job', sync=True) }}
+{{ config( materialized='job', sync=true) }}
 
 
 START_FROM = BEGINNING

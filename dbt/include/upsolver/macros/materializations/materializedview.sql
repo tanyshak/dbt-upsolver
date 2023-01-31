@@ -1,11 +1,7 @@
 {% materialization materializedview, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% if config.get('sync', none) %}
-    {% set sync = SYNC %}
-  {% else %}
-    {% set sync = '' %}
-  {% endif %}
+  {% set sync = config.get('sync', none) %}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -22,12 +18,16 @@
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
-  {% call statement('main') -%}
+  {% call statement('main') %}
 
-    CREATE {{ sync }} MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
+    {%- if sync -%}
+      CREATE SYNC MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
+    {%- else -%}
+      CREATE MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
+    {%- endif -%}
       {{ sql }}
 
-  {%- endcall %}
+  {% endcall %}
 
   {% do persist_docs(target_relation, model) %}
 

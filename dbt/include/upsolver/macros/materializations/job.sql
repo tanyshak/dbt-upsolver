@@ -1,11 +1,7 @@
 {% materialization job, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% if config.get('sync', none) %}
-    {% set sync = SYNC %}
-  {% else %}
-    {% set sync = '' %}
-  {% endif %}
+  {% set sync = config.get('sync', none) %}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -23,8 +19,11 @@
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
   {% call statement('main') -%}
-
-    CREATE {{ sync }} JOB {{target_relation.identifier}}
+    {%- if sync -%}
+      CREATE SYNC JOB {{target_relation.identifier}}
+    {%- else -%}
+      CREATE JOB {{target_relation.identifier}}
+    {%- endif -%}    
       {{ sql }}
 
   {%- endcall %}
