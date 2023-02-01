@@ -1,5 +1,4 @@
-{{ config( materialized='job', sync=true) }}
+{{ config( materialized='job', sync='SYNC', CONTENT_TYPE = 'JSON') }}
 
-CONTENT_TYPE = JSON
-AS COPY FROM S3 upsolver_s3_try BUCKET = 'upsolver-samples' PREFIX = 'orders/'
+COPY FROM S3 upsolver_s3_try BUCKET = 'upsolver-samples' PREFIX = 'orders/'
 INTO {{ ref('uptable_test') }};

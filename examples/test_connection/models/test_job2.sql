@@ -1,10 +1,12 @@
-{{ config( materialized='job', sync=true) }}
+{{ config( materialized='job',
+           sync='SYNC',
+           START_FROM = 'BEGINNING',
+           ADD_MISSING_COLUMNS = true,
+           RUN_INTERVAL = '1 MINUTE'
+         )
+}}
 
-
-START_FROM = BEGINNING
-ADD_MISSING_COLUMNS = true
-RUN_INTERVAL = 1 MINUTE
-AS INSERT INTO {{ ref('uptable_test2')}} MAP_COLUMNS_BY_NAME
+INSERT INTO {{ ref('uptable_test2')}} MAP_COLUMNS_BY_NAME
 -- Use the SELECT statement to choose columns from the source and implement your business logic transformations.
 SELECT
   orderid AS order_id,

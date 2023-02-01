@@ -3,6 +3,8 @@
 
   {% set sync = config.get('sync', none) %}
 
+  {% set config = config.get_all_except('sync') %}
+
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
                                               database=database) -%}
@@ -19,11 +21,13 @@
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
   {% call statement('main') -%}
-    {%- if sync -%}
-      CREATE SYNC JOB {{target_relation.identifier}}
-    {%- else -%}
-      CREATE JOB {{target_relation.identifier}}
-    {%- endif -%}    
+    CREATE {{ sync }} JOB {{target_relation.identifier}}
+
+    {% for k, v in config.items() %}
+      {{k}} = {{v}}
+    {% endfor %}
+    AS
+
       {{ sql }}
 
   {%- endcall %}

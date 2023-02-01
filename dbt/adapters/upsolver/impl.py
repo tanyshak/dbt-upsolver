@@ -13,10 +13,20 @@ import agate
 
 from typing import Any, List, Optional
 
-
-
+from dbt.context.providers import RuntimeConfigObject
 
 LIST_RELATIONS_MACRO_NAME = "list_relations_without_caching"
+
+def get_all_except(self, *except_params):
+    if not hasattr(self.model, "config"):
+        result = {}
+    else:
+        result = self.model.config._extra
+        for params in except_params:
+            result.pop(params, None)
+    return result
+
+RuntimeConfigObject.get_all_except = get_all_except
 
 
 class UpsolverAdapter(adapter_cls):
@@ -38,13 +48,9 @@ class UpsolverAdapter(adapter_cls):
         self.execute('SELECT * FROM SystemTables.logs.task_executions limit 1;')
 
     def create_schema(self, relation: UpsolverRelation) -> None:
-        logger.debug(f"+++++++++++++++++++++++++++++++++")
-        logger.debug(f"Pass create schema")
         pass
 
     def drop_schema(self, relation: UpsolverRelation) -> None:
-        logger.debug(f"+++++++++++++++++++++++++++++++++")
-        logger.debug(f"Pass drop schema")
         pass
 
 
@@ -57,5 +63,3 @@ class UpsolverAdapter(adapter_cls):
         #results = self.execute_macro(LIST_RELATIONS_MACRO_NAME, kwargs=kwargs)
         # Temporary!!!
         return []
-
- # may require more build out to make more user friendly to confer with team and community.
