@@ -1,9 +1,0 @@
-version: 2
-
-models:
-  - name: upsolver_s3_try
-  - name: uptable_test
-  - name: uptable_test2
-  - name: test_job
-  - name: test_job2
-  - name: materializedview_test
