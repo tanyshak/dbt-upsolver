@@ -33,4 +33,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   s3_to_athena:
-    # Config indicated by + and applies to all files under models/example/
+    +schema: 16e61b
+    +database: default_glue_catalog
