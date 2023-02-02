@@ -1,7 +1,7 @@
 {% materialization job, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% set sync = config.get('sync', none) %}
+  {% set sync = config.get('sync', '') %}
 
   {% set config = config.get_all_except('sync') %}
 
