@@ -2,22 +2,20 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from types import TracebackType
 from dbt.exceptions import (
-    InternalException,
-    RuntimeException,
     FailedToConnectException,
-    DatabaseException,
+    DatabaseException
 )
 from dbt.adapters.base import Credentials
-from dbt.contracts.connection import AdapterResponse
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
 #rom dbt.logger import GLOBAL_LOGGER as logger
-import upsolver
+import upsolver.dbapi as upsolver
+
 from typing import Optional, Tuple
 from dbt.events import AdapterLogger
 import dbt
 
-from dbt.contracts.connection import Connection, ConnectionState, AdapterResponse
+from dbt.contracts.connection import Connection,  AdapterResponse
 import agate
 import dbt.clients.agate_helper
 
@@ -93,7 +91,7 @@ class UpsolverConnectionManager(connection_cls):
 
         try:
             logger.debug(f"Start open a connection {cls.__class__.__name__}")
-            handle = upsolver.connection.connect(
+            handle = upsolver.connect(
                  api_url = credentials.api_url,
                  token = credentials.token)
             logger.debug(f"Connection is already open {cls.__class__.__name__}")
@@ -101,7 +99,7 @@ class UpsolverConnectionManager(connection_cls):
             connection.state = "open"
             connection.handle = handle
         except Exception as e:
-            logger.error(f"Connection error {str(e)}")
+            raise dbt.exceptions.FailedToConnectException(str(e))
         logger.debug(f"Connection: {connection}")
         return connection
 
@@ -141,8 +139,8 @@ class UpsolverConnectionManager(connection_cls):
     def execute(
         self, sql: str, auto_begin: bool = False, fetch: bool = False
     ) -> Tuple[AdapterResponse, agate.Table]:
-        logger.debug(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        logger.debug(f"@@@@@Start execute SQL @@@@: {sql}")
+        logger.debug(f"---------------------------")
+        logger.debug(f"---- Start execute SQL ---- {sql}")
         sql = self._add_query_comment(sql)
         _, cursor = self.add_query(sql, auto_begin)
         response = self.get_response(cursor)
