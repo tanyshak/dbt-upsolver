@@ -1,4 +1,5 @@
 {% materialization uptable, adapter='upsolver' %}
+
   {%- set identifier = model['alias'] -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
@@ -18,7 +19,7 @@
 
   {% call statement('main') -%}
 
-    create table {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
+    CREATE TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
     {{ sql }}
 
   {%- endcall %}
