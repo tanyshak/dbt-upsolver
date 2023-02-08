@@ -127,11 +127,17 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 {% endmacro %}
 
 */
-
-{% macro upsolver__list_relations_without_caching(schema_relation) -%}
-'''creates a table of relations withough using local caching.'''
-'''TODO add upsolver relations list'''
-
+{% macro list_relation_without_caching(schema_relation, relation_type) -%}
+  {% set source = relation_type +'s' %}
+  {% call statement('list_relation_without_caching', fetch_result=True) -%}
+    select
+      '{{ schema_relation.database }}' as database,
+      name,
+      '{{ schema_relation.schema }}' as schema,
+      '{{ relation_type }}' as type
+    from information_schema."{{ source }}"
+  {% endcall %}
+  {{ return(load_result('list_relation_without_caching').table) }}
 {% endmacro %}
 
 {% macro upsolver__list_schemas(database) -%}

@@ -15,7 +15,7 @@ from typing import Any, List, Optional
 
 from dbt.context.providers import RuntimeConfigObject
 
-LIST_RELATIONS_MACRO_NAME = "list_relations_without_caching"
+LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
 def get_all_except(self, *except_params):
     if not hasattr(self.model, "config"):
@@ -58,8 +58,27 @@ class UpsolverAdapter(adapter_cls):
         self,
         schema_relation: UpsolverRelation,
         ) -> List[UpsolverRelation]:
-        kwargs = {"schema_relation": schema_relation}
-        # Replace with upsolwer query relations list
-        #results = self.execute_macro(LIST_RELATIONS_MACRO_NAME, kwargs=kwargs)
-        # Temporary!!!
-        return []
+        #cols = ["database", "name", "schema", "type"]
+        materializations = ["table", "job", "connection", "view"]
+        results = agate.Table([],[])
+        for type in materializations:
+            kwargs = {"schema_relation": schema_relation, "relation_type": type}
+            result = self.execute_macro(LIST_RELATION_MACRO_NAME, kwargs=kwargs)
+            results = agate.Table.merge([results, result])
+        relations = []
+        quote_policy = {"database": True, "schema": True, "identifier": True}
+        for _database, name, _schema, _type in results:
+            try:
+                _type = self.Relation.get_relation_type(_type)
+            except ValueError:
+                _type = self.Relation.External
+            relations.append(
+                self.Relation.create(
+                    database=_database,
+                    schema=_schema,
+                    identifier=name,
+                    quote_policy=quote_policy,
+                    type=_type,
+                )
+            )
+        return relations

@@ -11,6 +11,7 @@ from dbt.utils import classproperty
 class UpsolverRelationType(StrEnum):
     # Built-in materialization types.
     View = "view"
+    External = "external"
 
     # Materialize-specific materialization types.
     Job = "job"
