@@ -1,6 +1,7 @@
 {% materialization uptable, adapter='upsolver' %}
 
   {%- set identifier = model['alias'] -%}
+  {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -17,7 +18,7 @@
   {% if old_relation %}
     {% call statement('main') -%}
       ALTER TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
-        SET COMMENT = 'table exists, alter table';
+        SET COMMENT = '{{ curr_datetime }}';
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}

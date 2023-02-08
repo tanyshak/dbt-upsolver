@@ -11,9 +11,13 @@ from dbt.adapters.upsolver.relation import UpsolverRelation
 
 import agate
 
+import datetime
+
 from typing import Any, List, Optional
 
 from dbt.context.providers import RuntimeConfigObject
+
+from dbt.adapters.base.meta import available
 
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
@@ -53,12 +57,16 @@ class UpsolverAdapter(adapter_cls):
     def drop_schema(self, relation: UpsolverRelation) -> None:
         pass
 
+    @available
+    def alter_datetime(self):
+        datetime_now = datetime.datetime.now()
+        return 'Altered: ' + datetime_now.strftime('%Y-%m-%d %H:%M:%S')
+
 
     def list_relations_without_caching(
         self,
         schema_relation: UpsolverRelation,
         ) -> List[UpsolverRelation]:
-        #cols = ["database", "name", "schema", "type"]
         materializations = ["table", "job", "connection", "view"]
         results = agate.Table([],[])
         for type in materializations:

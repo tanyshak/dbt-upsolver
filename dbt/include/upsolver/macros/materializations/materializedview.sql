@@ -1,7 +1,7 @@
 {% materialization materializedview, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
-
   {% set sync = config.get('sync', '') %}
+  {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -17,7 +17,7 @@
     {% if old_relation %}
       {% call statement('main') -%}
         ALTER MATERIALIZED VIEW {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
-          SET COMMENT = 'view exists, alter view';
+          SET COMMENT = '{{ curr_datetime }}';
       {%- endcall %}
     {% else %}
       {% call statement('main') -%}

@@ -2,8 +2,8 @@
   {%- set identifier = model['alias'] -%}
 
   {% set sync = config.get('sync', '') %}
-
   {% set config = config.get_all_except('sync') %}
+  {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -20,7 +20,7 @@
     {% call statement('main') -%}
 
       ALTER JOB {{target_relation.identifier}}
-        SET COMMENT = 'job exists, alter job';
+        SET COMMENT = '{{ curr_datetime }}';
 
     {%- endcall %}
   {% else %}

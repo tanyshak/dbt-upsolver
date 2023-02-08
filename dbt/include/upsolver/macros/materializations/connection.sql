@@ -1,8 +1,7 @@
-
 {% materialization connection, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
-
   {% set connection_type = config.require('connection_type') %}
+  {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -18,7 +17,7 @@
   {% if old_relation %}
     {% call statement('main') -%}
       ALTER {{ connection_type }} CONNECTION {{target_relation.identifier}}
-        SET COMMENT = 'connection exists, alter connection';
+        SET COMMENT = '{{ curr_datetime }}';
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}
