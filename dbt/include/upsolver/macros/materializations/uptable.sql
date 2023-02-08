@@ -10,19 +10,21 @@
                                                 database=database,
                                                 type="uptable") -%}
 
-  {% if old_relation %}
-    {{ adapter.drop_relation(old_relation) }}
-  {% endif %}
 
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
-  {% call statement('main') -%}
-
-    CREATE TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
-    {{ sql }}
-
-  {%- endcall %}
+  {% if old_relation %}
+    {% call statement('main') -%}
+      ALTER TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
+        SET COMMENT = 'table exists, alter table';
+    {%- endcall %}
+  {% else %}
+    {% call statement('main') -%}
+      CREATE TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
+      {{ sql }}
+    {%- endcall %}
+  {% endif %}
 
   {% do persist_docs(target_relation, model) %}
 

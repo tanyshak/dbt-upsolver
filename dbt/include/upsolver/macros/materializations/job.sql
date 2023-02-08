@@ -13,24 +13,28 @@
                                                 database=database,
                                                 type="job") -%}
 
-  {% if old_relation %}
-    {{ adapter.drop_relation(old_relation) }}
-  {% endif %}
-
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
-  {% call statement('main') -%}
-    CREATE {{ sync }} JOB {{target_relation.identifier}}
+  {% if old_relation %}
+    {% call statement('main') -%}
 
-    {% for k, v in config.items() %}
-      {{k}} = {{v}}
-    {% endfor %}
-    AS
+      ALTER JOB {{target_relation.identifier}}
+        SET COMMENT = 'job exists, alter job';
 
+    {%- endcall %}
+  {% else %}
+    {% call statement('main') -%}
+
+      CREATE {{ sync }} JOB {{target_relation.identifier}}
+      {% for k, v in config.items() %}
+        {{k}} = {{v}}
+      {% endfor %}
+      AS
       {{ sql }}
 
-  {%- endcall %}
+    {%- endcall %}
+  {% endif %}
 
   {% do persist_docs(target_relation, model) %}
 

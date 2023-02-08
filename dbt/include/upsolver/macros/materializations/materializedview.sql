@@ -1,7 +1,7 @@
 {% materialization materializedview, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
 
-  {% set sync = config.get('sync', none) %}
+  {% set sync = config.get('sync', '') %}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -11,23 +11,20 @@
                                                 database=database,
                                                 type="materializedview") -%}
 
-  {% if old_relation %}
-    {{ adapter.drop_relation(old_relation) }}
-  {% endif %}
-
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
-  {% call statement('main') %}
-
-    {%- if sync -%}
-      CREATE SYNC MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
-    {%- else -%}
-      CREATE MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
-    {%- endif -%}
-      {{ sql }}
-
-  {% endcall %}
+    {% if old_relation %}
+      {% call statement('main') -%}
+        ALTER MATERIALIZED VIEW {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
+          SET COMMENT = 'view exists, alter view';
+      {%- endcall %}
+    {% else %}
+      {% call statement('main') -%}
+        CREATE {{ sync }} MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
+        {{ sql }}
+      {%- endcall %}
+    {% endif %}
 
   {% do persist_docs(target_relation, model) %}
 

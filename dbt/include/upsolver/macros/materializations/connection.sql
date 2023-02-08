@@ -12,19 +12,20 @@
                                                 database=database,
                                                 type="connection") -%}
 
-  {% if old_relation %}
-    {{ adapter.drop_relation(old_relation) }}
-  {% endif %}
-
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
-  {% call statement('main') -%}
-
-    CREATE {{ connection_type }} CONNECTION {{target_relation.identifier}}
+  {% if old_relation %}
+    {% call statement('main') -%}
+      ALTER {{ connection_type }} CONNECTION {{target_relation.identifier}}
+        SET COMMENT = 'connection exists, alter connection';
+    {%- endcall %}
+  {% else %}
+    {% call statement('main') -%}
+      CREATE {{ connection_type }} CONNECTION {{target_relation.identifier}}
       {{ sql }}
-
-  {%- endcall %}
+    {%- endcall %}
+  {% endif %}
 
   {% do persist_docs(target_relation, model) %}
 
