@@ -32,5 +32,3 @@ clean-targets:         # directories to be removed by `dbt clean`
 # as tables. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
-  join_two_data_sources:
-    +database: default_glue_catalog
