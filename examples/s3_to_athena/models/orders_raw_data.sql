@@ -1,3 +1,3 @@
 {{ config( materialized='uptable') }}
 
-  PARTITIONED BY $event_date;
+PARTITIONED BY $event_date;

@@ -1,7 +1,9 @@
 {% materialization uptable, adapter='upsolver' %}
 
   {%- set identifier = model['alias'] -%}
+  {% set table_options = config.get('table_options', {}) %}
   {%- set curr_datetime = adapter.alter_datetime() -%}
+
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
                                               schema=schema,
@@ -18,12 +20,15 @@
   {% if old_relation %}
     {% call statement('main') -%}
       ALTER TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
-        SET COMMENT = '{{ curr_datetime }}';
+        SET COMMENT = '{{ curr_datetime }}'
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}
       CREATE TABLE {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
       {{ sql }}
+      {% for k, v in table_options.items() %}
+        {{k}} = {{v}}
+      {% endfor %}
     {%- endcall %}
   {% endif %}
 
