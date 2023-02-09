@@ -2,7 +2,7 @@
   {%- set identifier = model['alias'] -%}
 
   {% set sync = config.get('sync', '') %}
-  {% set config = config.get_all_except('sync') %}
+  {% set job_options = config.get('job_options', {}) %}
   {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
@@ -27,7 +27,7 @@
     {% call statement('main') -%}
 
       CREATE {{ sync }} JOB {{target_relation.identifier}}
-      {% for k, v in config.items() %}
+      {% for k, v in job_options.items() %}
         {{k}} = {{v}}
       {% endfor %}
       AS

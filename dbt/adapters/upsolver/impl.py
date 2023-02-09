@@ -15,22 +15,9 @@ import datetime
 
 from typing import Any, List, Optional
 
-from dbt.context.providers import RuntimeConfigObject
-
 from dbt.adapters.base.meta import available
 
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
-
-def get_all_except(self, *except_params):
-    if not hasattr(self.model, "config"):
-        result = {}
-    else:
-        result = self.model.config._extra
-        for params in except_params:
-            result.pop(params, None)
-    return result
-
-RuntimeConfigObject.get_all_except = get_all_except
 
 
 class UpsolverAdapter(adapter_cls):

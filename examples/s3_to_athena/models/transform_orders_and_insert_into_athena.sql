@@ -1,9 +1,12 @@
-{{ config( materialized='job',
-           sync='SYNC',
-           START_FROM = 'BEGINNING',
-           ADD_MISSING_COLUMNS = true,
-           RUN_INTERVAL = '1 MINUTE'
-         )
+{{ config(  materialized='job',
+            sync='SYNC',
+            job_options={
+              'START_FROM': 'BEGINNING',
+              'ADD_MISSING_COLUMNS': True,
+              'RUN_INTERVAL': '1 MINUTE',
+              'COMMENT': "'job comment'"
+            }
+          )
 }}
 
 INSERT INTO {{ ref('orders_transformed_data')}} MAP_COLUMNS_BY_NAME
@@ -17,4 +20,4 @@ SELECT
 FROM {{ ref('orders_raw_data')}}
 LET customer_name = customer.firstname || ' ' || customer.lastname -- create a computed column
 WHERE ordertype = 'SHIPPING'
-AND $event_time BETWEEN run_start_time() AND run_end_time();
+AND $event_time BETWEEN run_start_time() AND run_end_time()
