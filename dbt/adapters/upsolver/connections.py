@@ -37,9 +37,6 @@ class UpsolverCredentials(Credentials):
     database: str
     schema: str
 
-
-    #_ALIASES = {"dbname": "database", "schema": "database"}
-
     @property
     def type(self):
         return "upsolver"
@@ -104,7 +101,7 @@ class UpsolverConnectionManager(connection_cls):
         return connection
 
 #    @classmethod
-    def get_response(cls,cursor):
+    def get_response(cls, cursor):
         """
         Gets a cursor object and returns adapter-specific information
         about the last executed command generally a AdapterResponse ojbect
@@ -113,8 +110,8 @@ class UpsolverConnectionManager(connection_cls):
         """
         logger.debug(f"Get_response method {cls.__class__.__name__}")
 
-        code =  "OK" # cursor.sqlstate
-        rows = 1 #cursor.rowcount
+        code = "OK" #cursor.sqlstate
+        rows = cursor.rowcount
         status_message = f"{code} {rows}"
         return AdapterResponse(
             _message=status_message,
@@ -122,25 +119,9 @@ class UpsolverConnectionManager(connection_cls):
             rows_affected=rows
         )
 
-    def get_res(self,cursor):
-        return cursor.fetchmany()
-
-    #def execute(self, sql, auto_begin=False, fetch=False):
-        #logger.debug(f"Start execute")
-        #_, cursor = self.add_query(sql, auto_begin)
-        #status = self.get_response(cursor)
-        #logger.debug(f"Fetch one: {get_res(cursor)}")
-        #logger.debug(f"result_from_cursor")
-        #table = self.get_result_from_cursor(cursor)
-        #logger.debug(f"Results: {table}")
-
-        #return status, table
-
     def execute(
         self, sql: str, auto_begin: bool = False, fetch: bool = False
     ) -> Tuple[AdapterResponse, agate.Table]:
-        logger.debug(f"---------------------------")
-        logger.debug(f"---- Start execute SQL ---- {sql}")
         sql = self._add_query_comment(sql)
         _, cursor = self.add_query(sql, auto_begin)
         response = self.get_response(cursor)
@@ -148,24 +129,16 @@ class UpsolverConnectionManager(connection_cls):
             table = self.get_result_from_cursor(cursor)
         else:
             table = dbt.clients.agate_helper.empty_table()
-        logger.debug(f"Responce: {response}")
-        logger.debug(f"table: {table}")
-        logger.debug(f"fetchmany: {self.get_res(cursor)}")
-        logger.debug(f"get_response: {self.get_response(cursor)}")
+        logger.debug(f"Response: {response}")
         return response, table
 
     def cancel(self, connection):
-        """
-        Gets a connection object and attempts to cancel any ongoing queries.
-        """
-        # ## Example ##
-        # tid = connection.handle.transaction_id()
-        # sql = "select cancel_transaction({})".format(tid)
-        # logger.debug("Cancelling query "{}" ({})".format(connection_name, pid))
-        # _, cursor = self.add_query(sql, "master")
-        # res = cursor.fetchone()
-        # logger.debug("Canceled query "{}": {}".format(connection_name, res))
-        logger.debug(f"Cancel method {connection}")
+        pass
+
+    @classmethod
+    def is_cancelable(cls) -> bool:
+        # Because rollback is not supported
+        return False
 
     def add_begin_query(self, *args, **kwargs):
         pass
