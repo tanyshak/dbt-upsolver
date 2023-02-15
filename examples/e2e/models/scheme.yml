@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: kafak_connection
+    description: Kafka connection
+
+  - name: kafka_orders_raw
+    description: Table containing raw data streaming from Kafka, unnested and deduplicated
+
+  - name: kafka_orders_transformed_data
+    description: Table containing transformed and flattened data
+
+  - name: orders_materialized_view
+    description: Materialized view containing the total purchases by customer id
