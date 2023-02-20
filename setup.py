@@ -3,7 +3,7 @@ from setuptools import find_namespace_packages, setup
 
 package_name = "dbt-upsolver"
 # make sure this always matches dbt/adapters/{adapter}/__version__.py
-package_version = "1.3.0"
+package_version = "1.4.1"
 description = """The Upsolver adapter plugin for dbt"""
 
 setup(
@@ -17,6 +17,6 @@ setup(
     packages=find_namespace_packages(include=["dbt", "dbt.*"]),
     include_package_data=True,
     install_requires=[
-        "dbt-core~=1.3.0"
+        "dbt-core~=1.4.1"
     ]
 )
