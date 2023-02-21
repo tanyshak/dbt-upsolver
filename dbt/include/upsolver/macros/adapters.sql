@@ -136,6 +136,9 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
       '{{ schema_relation.schema }}' as schema,
       '{{ relation_type }}' as type
     from information_schema."{{ source }}"
+      {% if relation_type in ['table', 'view'] %}
+        where schema = '{{ schema_relation.schema }}'
+      {% endif %}
   {% endcall %}
   {{ return(load_result('list_relation_without_caching').table) }}
 {% endmacro %}

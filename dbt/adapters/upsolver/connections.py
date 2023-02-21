@@ -56,7 +56,6 @@ class UpsolverCredentials(Credentials):
 class UpsolverConnectionManager(connection_cls):
     TYPE = "upsolver"
 
-
     @contextmanager
     def exception_handler(self, sql: str):
         """
@@ -65,15 +64,14 @@ class UpsolverConnectionManager(connection_cls):
         """
         try:
             yield
+
         except upsolver.exceptions.DatabaseError as e:
-            self.release(connection_name)
-            logger.debug('Upsolver error: {}'.format(str(e)))
+            logger.debug('Failed to release upsolver connection!'.format(str(e)))
             raise dbt.exceptions.DbtDatabaseError(str(e))
 
         except Exception as e:
-            logger.error(f"Exception when running SQL: \"{sql}\"")
+            logger.error(f"Error running SQL: \"{sql}\"")
             logger.exception(e)
-            logger.exception(e.with_traceback(None))
             raise dbt.exceptions.DbtRuntimeError(str(e))
 
     @classmethod
