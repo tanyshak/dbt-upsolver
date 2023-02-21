@@ -1,10 +1,8 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
 from types import TracebackType
-from dbt.exceptions import (
-    FailedToConnectException,
-    DatabaseException
-)
+import dbt.exceptions
+
 from dbt.adapters.base import Credentials
 
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
@@ -67,11 +65,16 @@ class UpsolverConnectionManager(connection_cls):
         """
         try:
             yield
+        except upsolver.exceptions.DatabaseError as e:
+            self.release(connection_name)
+            logger.debug('Upsolver error: {}'.format(str(e)))
+            raise dbt.exceptions.DbtDatabaseError(str(e))
+
         except Exception as e:
             logger.error(f"Exception when running SQL: \"{sql}\"")
             logger.exception(e)
             logger.exception(e.with_traceback(None))
-            raise dbt.exceptions.DatabaseException(str(e))
+            raise dbt.exceptions.DbtRuntimeError(str(e))
 
     @classmethod
     def open(cls, connection):
@@ -83,7 +86,6 @@ class UpsolverConnectionManager(connection_cls):
         if connection.state == "open":
             logger.debug("Connection is already open, skipping open.")
             return connection
-
         credentials = connection.credentials
 
         try:
@@ -96,8 +98,8 @@ class UpsolverConnectionManager(connection_cls):
             connection.state = "open"
             connection.handle = handle
         except Exception as e:
-            raise dbt.exceptions.FailedToConnectException(str(e))
-        logger.debug(f"Connection: {connection}")
+            raise dbt.exceptions.DbtRuntimeError(str(e))
+
         return connection
 
 #    @classmethod
