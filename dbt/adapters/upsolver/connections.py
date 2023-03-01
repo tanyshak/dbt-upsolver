@@ -8,6 +8,7 @@ from dbt.adapters.base import Credentials
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
 #rom dbt.logger import GLOBAL_LOGGER as logger
 import upsolver.dbapi as upsolver
+import upsolver.client as upsolver_client
 
 from typing import Optional, Tuple
 from dbt.events import AdapterLogger
@@ -65,7 +66,7 @@ class UpsolverConnectionManager(connection_cls):
         try:
             yield
 
-        except upsolver.exceptions.DatabaseError as e:
+        except upsolver_client.exceptions.DatabaseError as e:
             logger.debug('Failed to release upsolver connection!'.format(str(e)))
             raise dbt.exceptions.DbtDatabaseError(str(e))
 
