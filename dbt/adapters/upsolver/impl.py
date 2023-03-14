@@ -17,6 +17,8 @@ from typing import Any, List, Optional
 
 from dbt.adapters.base.meta import available
 
+import re
+
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
 
@@ -49,6 +51,12 @@ class UpsolverAdapter(adapter_cls):
         datetime_now = datetime.datetime.now()
         return 'Altered: ' + datetime_now.strftime('%Y-%m-%d %H:%M:%S')
 
+    @available
+    def get_connection_from_sql(self, sql):
+        connection_identifier = re.search('"(.*)"', sql).group().split('.')[2] \
+                                  .translate(str.maketrans({'\"':'', '\'':''}))
+
+        return connection_identifier
 
     def list_relations_without_caching(
         self,

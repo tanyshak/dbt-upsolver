@@ -1,5 +1,6 @@
 {% materialization connection, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
+
   {% set connection_type = config.require('connection_type') %}
   {% set connection_options = config.require('connection_options') %}
   {%- set curr_datetime = adapter.alter_datetime() -%}
@@ -11,7 +12,6 @@
                                                 schema=schema,
                                                 database=database,
                                                 type="connection") -%}
-
 
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}

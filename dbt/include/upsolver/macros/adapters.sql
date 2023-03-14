@@ -134,8 +134,12 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
       '{{ schema_relation.database }}' as database,
       name,
       '{{ schema_relation.schema }}' as schema,
-      '{{ relation_type }}' as type
-    from information_schema."{{ source }}"
+      {% if relation_type == 'job' %}
+        'incremental' as type
+      {% else %}
+        '{{ relation_type }}' as type
+      {% endif %}
+    from System.information_schema."{{ source }}"
       {% if relation_type in ['table', 'view'] %}
         where schema = '{{ schema_relation.schema }}'
       {% endif %}

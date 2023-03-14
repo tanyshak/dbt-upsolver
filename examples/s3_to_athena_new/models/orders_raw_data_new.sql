@@ -8,7 +8,7 @@
               'BUCKET': "'upsolver-samples'",
               'PREFIX': "'orders/'"
             },
-        	partition_by=[{'field':'$event_date'}]
+        	partition_by={'field':'$event_date'}
       	)
 }}
 

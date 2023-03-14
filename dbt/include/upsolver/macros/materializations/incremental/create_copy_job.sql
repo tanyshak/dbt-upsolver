@@ -2,9 +2,6 @@
                                  sync, options, source_options,
                                  source) -%}
 
-
-  {%- set curr_datetime = adapter.alter_datetime() -%}
-
     CREATE
     {% if sync %}
       SYNC

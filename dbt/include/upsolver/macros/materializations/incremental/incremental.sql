@@ -8,6 +8,8 @@
   {% set options = config.get('options', {}) %}
   {% set source_options = config.get('source_options', {}) %}
   {% set source = config.get('source', none) %}
+  {% set partition_by = config.get('partition_by', {}) %}
+  {% set map_columns_by_name = config.get('map_columns_by_name', False) %}
 
 
   {% set job_identifier = identifier + '_job' %}
@@ -31,7 +33,7 @@
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
   {%- call statement('create_table_if_not_exists') -%}
-    {{ get_create_table_if_not_exists_sql(table_relation) }}
+    {{ get_create_table_if_not_exists_sql(table_relation, partition_by) }}
   {%- endcall -%}
 
   {% if old_relation %}
@@ -42,10 +44,14 @@
     {% call statement('main') -%}
       {% if unique_key %}
         {{ get_create_merge_job_sql(job_identifier, sync, options) }}
-      {% else %}
+      {% elif source %}
         {{ get_create_copy_job_sql(job_identifier, connection_identifier,
                                    table_relation, sync, options,
                                    source_options, source) }}
+      {% else  %}
+        {{ get_create_incert_job_sql(job_identifier,
+                                    table_relation, sync, options,
+                                    map_columns_by_name) }}
       {% endif %}
     {%- endcall %}
   {%- endif %}
