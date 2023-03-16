@@ -139,7 +139,7 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
       {% else %}
         '{{ relation_type }}' as type
       {% endif %}
-    from System.information_schema."{{ source }}"
+    from system.information_schema."{{ source }}"
       {% if relation_type in ['table', 'view'] %}
         where schema = '{{ schema_relation.schema }}'
       {% endif %}

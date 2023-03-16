@@ -59,7 +59,7 @@ class UpsolverAdapter(adapter_cls):
         return connection_identifier
 
     @available
-    def get_columns_names_with_types(list_dict):
+    def get_columns_names_with_types(self, list_dict):
         res = []
         for col in list_dict:
             if col.get('type'):
@@ -67,7 +67,7 @@ class UpsolverAdapter(adapter_cls):
         return ', '.join(set(res))
 
     @available
-    def get_columns_names(list_dict):
+    def get_columns_names(self, list_dict):
         res = []
         for col in list_dict:
             res.append(col['field'])
