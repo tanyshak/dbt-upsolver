@@ -58,6 +58,22 @@ class UpsolverAdapter(adapter_cls):
 
         return connection_identifier
 
+    @available
+    def get_columns_names_with_types(list_dict):
+        res = []
+        for col in list_dict:
+            if col.get('type'):
+                res.append(f"{col['field']} {col['type']}")
+        return ', '.join(set(res))
+
+    @available
+    def get_columns_names(list_dict):
+        res = []
+        for col in list_dict:
+            res.append(col['field'])
+        return ', '.join(set(res))
+
+
     def list_relations_without_caching(
         self,
         schema_relation: UpsolverRelation,
