@@ -13,10 +13,7 @@
   primary_key
   {% set map_columns_by_name = config.get('map_columns_by_name', False) %}
 
-
   {% set job_identifier = identifier + '_job' %}
-  {% set connection_identifier = adapter.get_connection_from_sql(sql) %}
-
 
   {%- set old_relation = adapter.get_relation(identifier=job_identifier,
                                               schema=schema,
@@ -53,7 +50,7 @@
                                     map_columns_by_name) }}
 
       {% else  %}
-        {{ get_create_copy_job_sql(job_identifier, connection_identifier,
+        {{ get_create_copy_job_sql(job_identifier, sql,
                                    table_relation, sync, options,
                                    source_options, source) }}
 

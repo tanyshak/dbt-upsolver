@@ -1,4 +1,4 @@
-{% macro get_create_merge_job_sql(job_identifier, sync, options) -%}
+{% macro get_create_merge_job_sql(job_identifier, table, sync, options) -%}
 
   CREATE
   {% if sync %}
@@ -10,6 +10,5 @@
   {% endfor %}
   AS MERGE INTO {{table}} AS target
   {{sql}}
-
 
 {%- endmacro %}

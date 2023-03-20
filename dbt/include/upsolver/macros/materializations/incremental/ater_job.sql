@@ -3,10 +3,11 @@
   {%- set curr_datetime = adapter.alter_datetime() -%}
 
   ALTER JOB {{job_identifier}}
-
+{# For later
   {% for k, v in options.items() %}
     SET {{k}} = {{v}}
   {% endfor %}
+#}
   SET COMMENT = '{{ curr_datetime }}'
 
 {%- endmacro %}

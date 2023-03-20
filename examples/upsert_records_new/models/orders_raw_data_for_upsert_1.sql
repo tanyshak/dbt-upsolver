@@ -8,8 +8,8 @@
               'BUCKET': "'upsolver-samples'",
               'PREFIX': "'orders/'"
             },
-        	partition_by={'field':'$event_date'}
+        	partition_by=[{'field':'$event_date'}]
       	)
 }}
 
-SELECT * FROM {{ ref('s3_connection_new') }}
+SELECT * FROM {{ ref('upsolver_s3_samples_1') }}

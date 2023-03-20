@@ -1,6 +1,7 @@
-{% macro get_create_copy_job_sql(job_identifier, connection_identifier, table,
-                                 sync, options, source_options,
-                                 source) -%}
+{% macro get_create_copy_job_sql(job_identifier, sql, table, sync, options,
+                                 source_options, source) -%}
+                                 
+    {% set connection_identifier = adapter.get_connection_from_sql(sql) %}
 
     CREATE
     {% if sync %}
@@ -15,6 +16,5 @@
       {{k}} = {{v}}
     {% endfor %}
     INTO {{table}}
-
 
 {%- endmacro %}

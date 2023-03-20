@@ -1,4 +1,5 @@
 {{ config(  materialized='incremental',
+            incremental_strategy='insert',
             sync=True,
             map_columns_by_name=True,
             options={
@@ -6,7 +7,7 @@
                 'ADD_MISSING_COLUMNS': True,
                 'RUN_INTERVAL': '1 MINUTE'
             	},
-            partition_by={'field':'partition_date', 'type':'date'}
+            primary_key=[{'field':'customer_email', 'type':'string'}]
           )
 }}
 
@@ -17,7 +18,7 @@ SELECT
   nettotal AS total,
   $event_time AS partition_date
 
- FROM {{ ref('orders_raw_data_new')}}
+ FROM {{ ref('orders_raw_data_1')}}
  LET customer_name = customer.firstname || ' ' || customer.lastname
  WHERE ordertype = 'SHIPPING'
  AND $event_time BETWEEN run_start_time() AND run_end_time()
