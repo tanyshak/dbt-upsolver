@@ -12,4 +12,4 @@
       	)
 }}
 
-SELECT * FROM {{ ref('s3_connection_1') }}
+SELECT * FROM {{ ref('s3_connection_2') }}

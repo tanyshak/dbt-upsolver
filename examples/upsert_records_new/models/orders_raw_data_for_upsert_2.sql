@@ -12,4 +12,4 @@
       	)
 }}
 
-SELECT * FROM {{ ref('upsolver_s3_samples_1') }}
+SELECT * FROM {{ ref('upsolver_s3_samples_2') }}

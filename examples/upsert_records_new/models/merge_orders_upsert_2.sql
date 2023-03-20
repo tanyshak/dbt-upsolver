@@ -16,7 +16,7 @@ USING (SELECT customer.email AS customer_email,
    SUM(nettotal) AS total_sales,
 	     MIN(orderdate) AS first_purchase,
    MAX(orderdate) AS last_purchase
-FROM {{ ref('orders_raw_data_for_upsert_1') }}
+FROM {{ ref('orders_raw_data_for_upsert_2') }}
 WHERE $event_time BETWEEN run_start_time() AND run_end_time()
 GROUP BY 1
 HAVING COUNT(DISTINCT orderid::string) > 1) source

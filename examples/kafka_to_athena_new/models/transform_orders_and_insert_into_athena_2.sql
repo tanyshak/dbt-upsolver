@@ -7,7 +7,7 @@
                 'ADD_MISSING_COLUMNS': True,
                 'RUN_INTERVAL': '1 MINUTE'
             	},
-            primary_key=[{'field':'customer_email', 'type':'string'}]
+            primary_key=[{'field':'partition_date', 'type':'date'}]
           )
 }}
 
@@ -18,7 +18,7 @@ SELECT
   nettotal AS total,
   $event_time AS partition_date
 
- FROM {{ ref('orders_raw_data_1')}}
+ FROM {{ ref('load_orders_raw_data_from_kafka_2')}}
  LET customer_name = customer.firstname || ' ' || customer.lastname
  WHERE ordertype = 'SHIPPING'
  AND $event_time BETWEEN run_start_time() AND run_end_time()
