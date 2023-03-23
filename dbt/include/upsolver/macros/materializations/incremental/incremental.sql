@@ -10,7 +10,7 @@
   {% set source = config.get('source', none) %}
   {% set partition_by = config.get('partition_by', []) %}
   {% set primary_key = config.get('primary_key', []) %}
-  primary_key
+
   {% set map_columns_by_name = config.get('map_columns_by_name', False) %}
 
   {% set job_identifier = identifier + '_job' %}
@@ -42,8 +42,8 @@
   {% else %}
     {% call statement('main') -%}
       {% if incremental_strategy == 'merge' %}
-        {{ get_create_merge_job_sql(job_identifier,
-                                    table_relation, sync, options) }}
+        {{ get_create_merge_job_sql(job_identifier, table_relation, sync,
+                                    options, primary_key) }}
       {% elif incremental_strategy == 'insert' %}
         {{ get_create_incert_job_sql(job_identifier,
                                     table_relation, sync, options,
