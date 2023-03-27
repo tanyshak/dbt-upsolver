@@ -2,7 +2,7 @@
 
     {% set connection_identifier = adapter.get_connection_from_sql(sql) %}
     {{ log("Options: " ~ options ) }}
-    {% set job_options, source_options = adapter.separete_options(options, source) %}
+    {% set job_options, source_options = adapter.separate_options(options, source) %}
 
     CREATE
     {% if sync %}

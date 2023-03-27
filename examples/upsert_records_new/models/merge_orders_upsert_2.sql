@@ -5,7 +5,8 @@
             options={
               	'START_FROM': 'BEGINNING',
                 'ADD_MISSING_COLUMNS': True,
-                'RUN_INTERVAL': '1 MINUTE'
+                'RUN_INTERVAL': '1 MINUTE',
+                'COMMENT': 'Test comment'
             },
             primary_key=[{'field':'customer_email', 'type':'string'}]
           )

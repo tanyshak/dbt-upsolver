@@ -17,7 +17,9 @@ from typing import Any, List, Optional
 
 from dbt.adapters.base.meta import available
 
-from dbt.adapters.upsolver.copy_job_options import copy_job_options
+from dbt.adapters.upsolver.copy_options import Copy_options
+from dbt.adapters.upsolver.connection_options import Connection_options
+from dbt.adapters.upsolver.transformation_options import Transformation_options
 
 import re
 
@@ -78,20 +80,34 @@ class UpsolverAdapter(adapter_cls):
         return ', '.join(set(res))
 
     @available
-    def separete_options(self, options, source):
-        copy_options = copy_job_options[source.lower()]
-        job_options = self.get_options(options, source, copy_options['job_options'])
-        source_options = self.get_options(options, source, copy_options['source_options'])
+    def separate_options(self, config_options, source):
+        job_options = self.enrich_options(config_options, source, 'job_options')
+        source_options = self.enrich_options(config_options, source, 'source_options')
         return job_options, source_options
 
-    def get_options(self, options, source, copy_options):
-        required_options = {}
-        for option, value in options.items():
-            find_value = copy_options.get(option.lower(), None)
+    @available
+    def enrich_options(self, config_options, source, options_type):
+        options = self.get_options(source, options_type)
+        enriched_options = {}
+        for option, value in config_options.items():
+            find_value = options.get(option.lower(), None)
             if find_value:
-                required_options[option] = find_value
-                required_options[option]['value'] = value
-        return required_options
+                if options[option.lower()]['type'] == 'list' and isinstance(value, str):
+                    value = f"('{value}')"
+                enriched_options[option] = find_value
+                enriched_options[option]['value'] = value
+            else:
+                logger.warning(f"Options not found: {option}")
+        return enriched_options
+
+    def get_options(self, source, options_type):
+        if options_type == 'connection_options':
+            options = Connection_options[source.lower()]
+        elif options_type == 'transformation_options':
+            options = Transformation_options[source.lower()]
+        else:
+            options = Copy_options[source.lower()][options_type]
+        return options
 
     def list_relations_without_caching(
         self,
