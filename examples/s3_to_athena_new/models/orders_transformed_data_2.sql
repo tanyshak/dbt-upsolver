@@ -18,7 +18,7 @@ SELECT
   nettotal AS total,
   $event_time AS partition_date
 
- FROM {{ ref('orders_raw_data_3')}}
+ FROM {{ ref('orders_raw_data_2')}}
  LET customer_name = customer.firstname || ' ' || customer.lastname
  WHERE ordertype = 'SHIPPING'
  AND $event_time BETWEEN run_start_time() AND run_end_time()

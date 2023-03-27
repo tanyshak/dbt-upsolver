@@ -21,13 +21,16 @@
   {{ log("Options: " ~ connection_options ) }}
   {{ log("Enriched options: " ~ enriched_options ) }}
 
+
   {% if old_relation %}
     {% call statement('main') -%}
       ALTER {{ connection_type }} CONNECTION {{target_relation.identifier}}
         {% for k, v in enriched_options.items() %}
-          {% set value =  v['value'] %}
+        {% set value =  v['value'] %}
           {% if v['type'] == 'text' and v['editable'] %}
             SET {{k}} = '{{ value }}'
+          {% elif v['type'] == 'identifier' and v['editable'] %}
+            SET {{k}} = "{{ value }}"
           {% elif  v['editable'] %}
             SET {{k}} = {{ value }}
           {% endif %}
@@ -40,6 +43,8 @@
         {% set value =  v['value'] %}
         {% if v['type'] == 'text' %}
           {{k}} = '{{ value }}'
+        {% elif v['type'] == 'identifier' %}
+          {{k}} = "{{ value }}"
         {% else %}
           {{k}} = {{ value }}
         {% endif %}

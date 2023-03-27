@@ -13,6 +13,8 @@
       {% set value =  v['value'] %}
       {% if v['type'] == 'text' %}
         {{k}} = '{{ value }}'
+      {% elif v['type'] == 'identifier' %}
+        {{k}} = "{{ value }}"
       {% else %}
         {{k}} = {{ value }}
       {% endif %}
@@ -22,6 +24,8 @@
       {% set value =  v['value'] %}
       {% if v['type'] == 'text' %}
         {{k}} = '{{ value }}'
+      {% elif v['type'] == 'identifier' %}
+        {{k}} = "{{ value }}"
       {% else %}
         {{k}} = {{ value }}
       {% endif %}

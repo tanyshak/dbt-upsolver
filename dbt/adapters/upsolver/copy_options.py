@@ -1,7 +1,8 @@
 Copy_options = {
   "kafka": {
     "source_options": {
-        "topic_name": {"type": "text", "editable": False, "optional": False}},
+        "topic_name": {"type": "text", "editable": False, "optional": False},
+        "topic": {"type": "text", "editable": False, "optional": False}},
     "job_options": {
         "consumer_properties": {"type": "text", "editable": True, "optional": True},
         "reader_shards": {"type": "integer", "editable": True, "optional": True},
