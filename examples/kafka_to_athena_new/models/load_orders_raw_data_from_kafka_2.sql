@@ -2,9 +2,9 @@
             source = 'KAFKA',
         	  options={
               'CONTENT_TYPE': 'JSON',
-              'COMPUTE_CLUSTER': '"Default Compute (Free)"'
+              'COMPUTE_CLUSTER': '"Default Compute (Free)"',
+              'TOPIC': "'orders'"
             },
-            source_options={'TOPIC': "'orders'"},
             partition_by=[{'field':'$event_date'}]
       	)
 }}

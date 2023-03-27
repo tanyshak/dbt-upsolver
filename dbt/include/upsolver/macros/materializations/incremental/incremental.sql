@@ -6,7 +6,6 @@
 
   {% set sync = config.get('sync', False) %}
   {% set options = config.get('options', {}) %}
-  {% set source_options = config.get('source_options', {}) %}
   {% set source = config.get('source', none) %}
   {% set partition_by = config.get('partition_by', []) %}
   {% set primary_key = config.get('primary_key', []) %}
@@ -51,8 +50,7 @@
 
       {% else  %}
         {{ get_create_copy_job_sql(job_identifier, sql,
-                                   table_relation, sync, options,
-                                   source_options, source) }}
+                                   table_relation, sync, options, source) }}
 
       {% endif %}
     {%- endcall %}

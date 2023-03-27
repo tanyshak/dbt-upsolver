@@ -17,7 +17,11 @@ from typing import Any, List, Optional
 
 from dbt.adapters.base.meta import available
 
+from dbt.adapters.upsolver.copy_job_options import copy_job_options
+
 import re
+
+import json
 
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
@@ -73,6 +77,21 @@ class UpsolverAdapter(adapter_cls):
             res.append(col['field'])
         return ', '.join(set(res))
 
+    @available
+    def separete_options(self, options, source):
+        copy_options = copy_job_options[source.lower()]
+        job_options = self.get_options(options, source, copy_options['job_options'])
+        source_options = self.get_options(options, source, copy_options['source_options'])
+        return job_options, source_options
+
+    def get_options(self, options, source, copy_options):
+        required_options = {}
+        for option, value in options.items():
+            find_value = copy_options.get(option.lower(), None)
+            if find_value:
+                required_options[option] = find_value
+                required_options[option]['value'] = value
+        return required_options
 
     def list_relations_without_caching(
         self,
