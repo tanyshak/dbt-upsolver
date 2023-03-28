@@ -7,16 +7,7 @@
     SYNC
   {% endif %}
   JOB {{ job_identifier }}
-  {% for k, v in enriched_options.items() %}
-    {% set value =  v['value'] %}
-    {% if v['type'] == 'text' %}
-      {{k}} = '{{ value }}'
-    {% elif v['type'] == 'identifier' %}
-      {{k}} = "{{ value }}"
-    {% else %}
-      {{k}} = {{ value }}
-    {% endif %}
-  {% endfor %}
+    {{ render_options(enriched_options, 'create') }}
   AS MERGE INTO {{ table }} AS target
   USING (
   {{ sql }}

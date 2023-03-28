@@ -9,27 +9,9 @@
       SYNC
     {% endif %}
     JOB {{job_identifier}}
-    {% for k, v in job_options.items() %}
-      {% set value =  v['value'] %}
-      {% if v['type'] == 'text' %}
-        {{k}} = '{{ value }}'
-      {% elif v['type'] == 'identifier' %}
-        {{k}} = "{{ value }}"
-      {% else %}
-        {{k}} = {{ value }}
-      {% endif %}
-    {% endfor %}
+    {{ render_options(job_options, 'create') }}
     AS COPY FROM {{source}} {{connection_identifier}}
-    {% for k, v in source_options.items() %}
-      {% set value =  v['value'] %}
-      {% if v['type'] == 'text' %}
-        {{k}} = '{{ value }}'
-      {% elif v['type'] == 'identifier' %}
-        {{k}} = "{{ value }}"
-      {% else %}
-        {{k}} = {{ value }}
-      {% endif %}
-    {% endfor %}
+    {{ render_options(source_options, 'create') }}
     INTO {{table}}
 
 {%- endmacro %}
