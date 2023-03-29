@@ -31,7 +31,7 @@
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
   {%- call statement('create_table_if_not_exists') -%}
-    {{ get_create_table_if_not_exists_sql(table_relation, partition_by, primary_key) }}
+    {{ get_create_table_if_not_exists_sql(table_relation, partition_by, primary_key, options) }}
   {%- endcall -%}
 
   {% if old_relation %}

@@ -17,9 +17,10 @@ from typing import Any, List, Optional
 
 from dbt.adapters.base.meta import available
 
-from dbt.adapters.upsolver.copy_options import Copy_options
-from dbt.adapters.upsolver.connection_options import Connection_options
-from dbt.adapters.upsolver.transformation_options import Transformation_options
+from dbt.adapters.upsolver.options.copy_options import Copy_options
+from dbt.adapters.upsolver.options.connection_options import Connection_options
+from dbt.adapters.upsolver.options.transformation_options import Transformation_options
+from dbt.adapters.upsolver.options.table_options import Table_options
 
 import re
 
@@ -105,6 +106,8 @@ class UpsolverAdapter(adapter_cls):
             options = Connection_options[source.lower()]
         elif options_type == 'transformation_options':
             options = Transformation_options[source.lower()]
+        elif options_type == 'table_options':
+            options = Table_options
         else:
             options = Copy_options[source.lower()][options_type]
         return options
