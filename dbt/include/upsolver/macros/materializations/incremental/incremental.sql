@@ -36,7 +36,7 @@
 
   {% if old_relation %}
     {% call statement('main') -%}
-      {{ get_alter_job_sql(job_identifier, options) }}
+      {{ get_alter_job_sql(job_identifier, options, incremental_strategy, source) }}
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}

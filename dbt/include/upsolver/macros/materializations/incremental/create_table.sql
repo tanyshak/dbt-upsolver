@@ -10,12 +10,11 @@
   {%- set columns_partitioned_by  = adapter.get_columns_names(partition_by) -%}
   {%- set columns_primary_key  = adapter.get_columns_names(primary_key) -%}
   {% set enriched_options = adapter.enrich_options(options, None, 'table_options') %}
-
-
+  {% set enriched_editable_options = adapter.filter_options(enriched_options, 'editable') %}
 
   {% if old_relation %}
     ALTER TABLE {{target_relation}}
-      {{ render_options(enriched_options, 'alter') }}
+      {{ render_options(enriched_editable_options, 'alter') }}
   {% else %}
     CREATE TABLE {{ target_relation }}
     ({{ columns_with_types }})

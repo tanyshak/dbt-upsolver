@@ -101,6 +101,11 @@ class UpsolverAdapter(adapter_cls):
                 logger.warning(f"Options not found: {option}")
         return enriched_options
 
+    @available
+    def filter_options(self, options, parametr):
+        editable = {key:val for key, val in options.items() if val[parametr] == True}
+        return editable
+
     def get_options(self, source, options_type):
         if options_type == 'connection_options':
             options = Connection_options[source.lower()]

@@ -4,7 +4,7 @@
   {% set connection_type = config.require('connection_type') %}
   {% set connection_options = config.require('connection_options') %}
   {% set enriched_options = adapter.enrich_options(connection_options, connection_type, 'connection_options') %}
-  {# {% set editable_options = adapter.filter_options(enriched_options, 'editable') %} #}
+  {% set enriched_editable_options = adapter.filter_options(enriched_options, 'editable') %}
 
 
 
@@ -23,12 +23,13 @@
 
   {{ log("Options: " ~ connection_options ) }}
   {{ log("Enriched options: " ~ enriched_options ) }}
+  {{ log("Enriched options: " ~ enriched_options ) }}
 
 
   {% if old_relation %}
     {% call statement('main') %}
       ALTER {{ connection_type }} CONNECTION {{target_relation.identifier}}
-        {{ render_options(enriched_options, 'alter') }}
+        {{ render_options(enriched_editable_options, 'alter') }}
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}
