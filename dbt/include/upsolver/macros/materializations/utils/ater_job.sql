@@ -9,5 +9,5 @@
 
   ALTER JOB {{job_identifier}}
     {{ render_options(enriched_editable_options, 'alter') }}
-    
+
 {%- endmacro %}

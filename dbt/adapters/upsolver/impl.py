@@ -1,31 +1,18 @@
-
 from dbt.adapters.sql import SQLAdapter as adapter_cls
-
 from dbt.adapters.upsolver import UpsolverConnectionManager
-
 from dbt.events import AdapterLogger
-
-logger = AdapterLogger("Upsolver")
-
 from dbt.adapters.upsolver.relation import UpsolverRelation
-
-import agate
-
-import datetime
-
-from typing import Any, List, Optional
-
+from typing import List
 from dbt.adapters.base.meta import available
-
 from dbt.adapters.upsolver.options.copy_options import Copy_options
 from dbt.adapters.upsolver.options.connection_options import Connection_options
 from dbt.adapters.upsolver.options.transformation_options import Transformation_options
 from dbt.adapters.upsolver.options.table_options import Table_options
-
+import agate
+import datetime
 import re
 
-import json
-
+logger = AdapterLogger("Upsolver")
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
 
@@ -45,7 +32,7 @@ class UpsolverAdapter(adapter_cls):
         return "datenow()"
 
     def debug_query(self) -> None:
-        self.execute('SELECT * FROM SystemTables.logs.task_executions limit 1;')
+        self.execute('SELECT * FROM logs.logs.task_executions limit 1;')
 
     def create_schema(self, relation: UpsolverRelation) -> None:
         pass

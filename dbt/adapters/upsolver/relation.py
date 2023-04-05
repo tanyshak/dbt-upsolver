@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Optional, Type
-
 from dbt.adapters.base import BaseRelation
 from dbt.dataclass_schema import StrEnum
 from dbt.utils import classproperty

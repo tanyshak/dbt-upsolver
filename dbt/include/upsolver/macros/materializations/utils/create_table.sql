@@ -4,7 +4,6 @@
                                             schema=target_relation.schema,
                                             database=target_relation.database) -%}
 
-
   {%- set curr_datetime = adapter.alter_datetime() -%}
   {%- set columns_with_types = adapter.get_columns_names_with_types(partition_by + primary_key) -%}
   {%- set columns_partitioned_by  = adapter.get_columns_names(partition_by) -%}

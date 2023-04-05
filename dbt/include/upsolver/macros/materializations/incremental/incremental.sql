@@ -1,17 +1,14 @@
 {% materialization incremental, adapter='upsolver' %}
-  {%- set identifier = model['alias'] -%}
 
+  {%- set identifier = model['alias'] -%}
   {% set incremental_strategy = config.get('incremental_strategy', False) %}
   {% set partition_by = config.get('partition_by', []) %}
-
   {% set sync = config.get('sync', False) %}
   {% set options = config.get('options', {}) %}
   {% set source = config.get('source', none) %}
   {% set partition_by = config.get('partition_by', []) %}
   {% set primary_key = config.get('primary_key', []) %}
-
   {% set map_columns_by_name = config.get('map_columns_by_name', False) %}
-
   {% set job_identifier = identifier + '_job' %}
 
   {%- set old_relation = adapter.get_relation(identifier=job_identifier,
