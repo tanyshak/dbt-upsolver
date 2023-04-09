@@ -51,10 +51,10 @@ dbt --version
 #### Expect to see:
 ```
 Core:
-  - installed: 1.4.1
-  - latest:    1.4.1 - Up to date!
+  - installed: 1.4.5
+  - latest:    1.4.5 - Up to date!
 Plugins:
-  - upsolver: 1.4.1 - Could not determine latest version
+  - upsolver: 1.4.5 - Could not determine latest version
 ```
 ###  5.  Add to profiles.yml the following code:
 ###### profiles.yml location is something like /Users/tanya shemet/.dbt/profiles.yml
