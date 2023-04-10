@@ -37,12 +37,6 @@ def _dbt_upsolver_version():
         upsolver_version += parts["prekind"] + parts["pre"]
     return upsolver_version
 
-def _get_dbt_core_version():
-    parts = _get_plugin_version_dict()
-    minor = "{major}.{minor}.{patch}".format(**parts)
-    pre = parts["prekind"] + "1" if parts["prekind"] else ""
-    return f"{minor}{pre}"
-
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, "README.md")) as f:
     long_description = f.read()
@@ -50,7 +44,7 @@ with open(os.path.join(this_directory, "README.md")) as f:
 package_name = "dbt-upsolver"
 package_version = _dbt_upsolver_version()
 description = """The Upsolver adapter plugin for dbt"""
-dbt_version = _get_dbt_core_version()
+dbt_version = '1.4.5'
 
 setup(
     name=package_name,

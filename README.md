@@ -36,10 +36,10 @@ dbt --version
 #### Expect to see:
 ```
 Core:
-  - installed: 1.4.5
-  - latest:    1.4.5 - Up to date!
+  - installed: <version>
+  - latest:    <version> - Up to date!
 Plugins:
-  - upsolver: 1.4.5 - Could not determine latest version
+  - upsolver: <version> - Could not determine latest version
 ```
 
 ### 5. clone dbt-upsolver
