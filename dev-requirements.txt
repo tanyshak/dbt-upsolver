@@ -1,7 +1,7 @@
-dbt-tests-adapter~=1.4.5
-mypy==1.2.0
-pre-commit~=3.2
-pytest~=7.2
-tox~=4.4
-wheel==0.40.0
-twine==4.0.2
+dbt-tests-adapter
+mypy==0.981
+pre-commit
+pytest
+tox>=3.13
+wheel
+twine

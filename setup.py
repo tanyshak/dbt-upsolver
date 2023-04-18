@@ -67,7 +67,21 @@ setup(
     },
     include_package_data=True,
     install_requires = [
-        "dbt-core~={}".format(dbt_version)
+        "dbt-core~={}".format(dbt_version),
+        "upsolver-sdk-python~=0.1.6"
     ],
-    python_requires=">=3.7"
+    zip_safe=False,
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+    ],
+    python_requires=">=3.7",
 )
