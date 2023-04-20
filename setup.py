@@ -44,7 +44,6 @@ with open(os.path.join(this_directory, "README.md")) as f:
 package_name = "dbt-upsolver"
 package_version = _dbt_upsolver_version()
 description = """The Upsolver adapter plugin for dbt"""
-dbt_version = '1.4.5'
 
 setup(
     name=package_name,
@@ -67,8 +66,8 @@ setup(
     },
     include_package_data=True,
     install_requires = [
-        "dbt-core~={}".format(dbt_version),
-        "upsolver-sdk-python~=0.1.6"
+        "dbt-core",
+        "upsolver-sdk-python"
     ],
     zip_safe=False,
     classifiers=[
