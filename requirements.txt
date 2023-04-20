@@ -1,0 +1,2 @@
+dbt-core
+upsolver-sdk-python

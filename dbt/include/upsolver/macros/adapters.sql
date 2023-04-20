@@ -1,8 +1,3 @@
-/* For examples of how to fill out the macros please refer to the postgres adapter and docs
-postgres adapter macros: https://github.com/dbt-labs/dbt-core/blob/main/plugins/postgres/dbt/include/postgres/macros/adapters.sql
-dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
-*/
-
 {% macro upsolver__alter_column_type(relation,column_name,new_column_type) -%}
 '''Changes column name or data type'''
 /*
@@ -17,37 +12,6 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 '''Checks if schema name exists and returns number or times it shows up.'''
   {{ print('Checks if schema name exists') }}
 {% endmacro %}
-
-
---  Example from postgres adapter in dbt-core
---  Notice how you can build out other methods than the designated ones for the impl.py file,
---  to make a more robust adapter. ex. (verify_database)
-
-/*
-
- {% macro postgres__create_schema(relation) -%}
-   {% if relation.database -%}
-    {{ adapter.verify_database(relation.database) }}
-  {%- endif -%}   {%- call statement('create_schema') -%}
-     create schema if not exists {{ relation.without_identifier().include(database=False) }}
-   {%- endcall -%}
- {% endmacro %}
-
-*/
-
-
-/*
-
-{% macro postgres__drop_schema(relation) -%}
-  {% if relation.database -%}
-    {{ adapter.verify_database(relation.database) }}
-  {%- endif -%}
-  {%- call statement('drop_schema') -%}
-    drop schema if exists {{ relation.without_identifier().include(database=False) }} cascade
-  {%- endcall -%}
-{% endmacro %}
-
-*/
 
 {% macro upsolver__drop_relation(relation) -%}
 '''Deletes relatonship identifer between tables.'''
@@ -64,30 +28,6 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 */
 {% endmacro %}
 
-/*
-
- Example of 1 of 3 required macros that does not have a default implementation
-{% macro postgres__get_columns_in_relation(relation) -%}
-  {% call statement('get_columns_in_relation', fetch_result=True) %}
-      select
-          column_name,
-          data_type,
-          character_maximum_length,
-          numeric_precision,
-          numeric_scale
-      from {{ relation.information_schema('columns') }}
-      where table_name = '{{ relation.identifier }}'
-        {% if relation.schema %}
-        and table_schema = '{{ relation.schema }}'
-        {% endif %}
-      order by ordinal_position
-  {% endcall %}
-  {% set table = load_result('get_columns_in_relation').table %}
-  {{ return(sql_convert_columns_in_relation(table)) }}
-{% endmacro %}
-*/
-
-
 {% macro upsolver__get_columns_in_relation(relation) -%}
 '''Returns a list of Columns in a table.'''
 /*
@@ -101,32 +41,6 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
 */
 {% endmacro %}
 
---  Example of 2 of 3 required macros that do not come with a default implementation
-
-/*
-
-{% macro postgres__list_relations_without_caching(schema_relation) %}
-  {% call statement('list_relations_without_caching', fetch_result=True) -%}
-    select
-      '{{ schema_relation.database }}' as database,
-      tablename as name,
-      schemaname as schema,
-      'table' as type
-    from pg_tables
-    where schemaname ilike '{{ schema_relation.schema }}'
-    union all
-    select
-      '{{ schema_relation.database }}' as database,
-      viewname as name,
-      schemaname as schema,
-      'view' as type
-    from pg_views
-    where schemaname ilike '{{ schema_relation.schema }}'
-  {% endcall %}
-  {{ return(load_result('list_relations_without_caching').table) }}
-{% endmacro %}
-
-*/
 {% macro list_relation_without_caching(schema_relation, relation_type) -%}
   {% set source = relation_type +'s' %}
   {% call statement('list_relation_without_caching', fetch_result=True) -%}
@@ -134,8 +48,12 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
       '{{ schema_relation.database }}' as database,
       name,
       '{{ schema_relation.schema }}' as schema,
-      '{{ relation_type }}' as type
-    from information_schema."{{ source }}"
+      {% if relation_type == 'job' %}
+        'incremental' as type
+      {% else %}
+        '{{ relation_type }}' as type
+      {% endif %}
+    from system.information_schema."{{ source }}"
       {% if relation_type in ['table', 'view'] %}
         where schema = '{{ schema_relation.schema }}'
       {% endif %}
@@ -166,16 +84,6 @@ dbt docs: https://docs.getdbt.com/docs/contributing/building-a-new-adapter
   2. remove rows from relations
 */
 {% endmacro %}
-
-/*
-
-Example 3 of 3 of required macros that does not have a default implementation.
- ** Good example of building out small methods ** please refer to impl.py for implementation of now() in postgres plugin
-{% macro postgres__current_timestamp() -%}
-  now()
-{%- endmacro %}
-
-*/
 
 {% macro upsolver__current_timestamp() -%}
 '''Returns current UTC time'''

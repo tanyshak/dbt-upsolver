@@ -8,7 +8,7 @@
 
 ### 1. Install dbt-core:
 ```sh
-pip install dbt-core
+pip install dbt-core~=1.4.5
 ```
 ##### make sure that insatled latest dbt version  1.4.1:
 ```sh
@@ -20,43 +20,34 @@ pip install --upgrade dbt-core
 ```
 or use [installation guide](https://docs.getdbt.com/docs/get-started/installation)
 
-### 2. Get local driver version and install it:
+### 2. Install upsolver-sdk-python:
 ```sh
-git clone git@github.com:Upsolver/upsolver-sdk-python.git upsolver-sdk-python
-cd upsolver-sdk-python
-pip install -e $(pwd)
+pip install upsolver-sdk-python
 ```
-### 3. Get local adapter version:
-#### back to work directory
-```sh
-cd ..
-```
-#### clone dbt-upsolver
-```sh
-git clone git@github.com:Upsolver/dbt-upsolver.git dbt-upsolver
-```
-### 4. Build whl file and install it:
-```sh
-cd dbt-upsolver
+### 3. Install test dbt-upsolver adapter :
 
-python setup.py bdist_wheel --universal
-
-find ./dist/*.whl -maxdepth 1 -type f | xargs pip install --force-reinstall --find-links=dist/
+```sh
+ pip install -i https://test.pypi.org/simple/ dbt-upsolver
 ```
-
-### 5. Make sure the adapter is installed:
+### 4. Make sure the adapter is installed:
 ```sh
 dbt --version
 ```
 #### Expect to see:
 ```
 Core:
-  - installed: 1.4.1
-  - latest:    1.4.1 - Up to date!
+  - installed: <version>
+  - latest:    <version> - Up to date!
 Plugins:
-  - upsolver: 1.4.1 - Could not determine latest version
+  - upsolver: <version> - Could not determine latest version
 ```
-###  5.  Add to profiles.yml the following code:
+
+### 5. clone dbt-upsolver
+```sh
+git clone git@github.com:Upsolver/dbt-upsolver.git dbt-upsolver
+```
+
+###  6.  Add to profiles.yml the following code:
 ###### profiles.yml location is something like /Users/tanya shemet/.dbt/profiles.yml
 ```yml
 config:
@@ -80,12 +71,12 @@ mt-api-integ-e2e:
 > database and schema  you can find on your https://mt-api-integ-e2e.upsolver.com
 > token you should  generate on your https://mt-api-integ-e2e.upsolver.com
 
-###  6. Run dbt in one of the folders of projects examples
+###  7. Run dbt in one of the folders of projects examples
 For example: /dbt-upsolver/examples/s3_to_athena
 #### Go to project folder
 Under dbt-upsolver/
 ```sh
-cd examples/s3_to_athena
+cd examples/upsert_records_new
 ```
 #### - To check connection:
 ```sh

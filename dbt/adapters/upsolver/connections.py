@@ -1,24 +1,14 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
-from types import TracebackType
-import dbt.exceptions
-
 from dbt.adapters.base import Credentials
-
 from dbt.adapters.sql import SQLConnectionManager as connection_cls
-#rom dbt.logger import GLOBAL_LOGGER as logger
 import upsolver.dbapi as upsolver
 import upsolver.client as upsolver_client
-
-from typing import Optional, Tuple
-from dbt.events import AdapterLogger
+from typing import Tuple
 import dbt
-
 from dbt.contracts.connection import Connection,  AdapterResponse
 import agate
-import dbt.clients.agate_helper
 
-logger = AdapterLogger("Upsolver")
 
 @dataclass
 class UpsolverAdapterResponse(AdapterResponse):
@@ -67,12 +57,9 @@ class UpsolverConnectionManager(connection_cls):
             yield
 
         except upsolver_client.exceptions.DatabaseError as e:
-            logger.debug('Failed to release upsolver connection!'.format(str(e)))
             raise dbt.exceptions.DbtDatabaseError(str(e))
 
         except Exception as e:
-            logger.error(f"Error running SQL: \"{sql}\"")
-            logger.exception(e)
             raise dbt.exceptions.DbtRuntimeError(str(e))
 
     @classmethod
@@ -83,17 +70,13 @@ class UpsolverConnectionManager(connection_cls):
         """
 
         if connection.state == "open":
-            logger.debug("Connection is already open, skipping open.")
             return connection
         credentials = connection.credentials
 
         try:
-            logger.debug(f"Start open a connection {cls.__class__.__name__}")
             handle = upsolver.connect(
                  api_url = credentials.api_url,
                  token = credentials.token)
-            logger.debug(f"Connection is already open {cls.__class__.__name__}")
-            logger.debug(f"Credentials: {credentials}")
             connection.state = "open"
             connection.handle = handle
         except Exception as e:
@@ -101,7 +84,6 @@ class UpsolverConnectionManager(connection_cls):
 
         return connection
 
-#    @classmethod
     def get_response(cls, cursor):
         """
         Gets a cursor object and returns adapter-specific information
@@ -109,7 +91,6 @@ class UpsolverConnectionManager(connection_cls):
         that has items such as code, rows_affected,etc. can also just be a string ex. "OK"
         if your cursor does not offer rich metadata.
         """
-        logger.debug(f"Get_response method {cls.__class__.__name__}")
 
         code = "OK" #cursor.sqlstate
         rows = cursor.rowcount
@@ -130,7 +111,6 @@ class UpsolverConnectionManager(connection_cls):
             table = self.get_result_from_cursor(cursor)
         else:
             table = dbt.clients.agate_helper.empty_table()
-        logger.debug(f"Response: {response}")
         return response, table
 
     def cancel(self, connection):
@@ -138,7 +118,6 @@ class UpsolverConnectionManager(connection_cls):
 
     @classmethod
     def is_cancelable(cls) -> bool:
-        # Because rollback is not supported
         return False
 
     def add_begin_query(self, *args, **kwargs):

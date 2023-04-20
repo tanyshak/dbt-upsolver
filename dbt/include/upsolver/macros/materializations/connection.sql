@@ -1,6 +1,13 @@
 {% materialization connection, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
+
   {% set connection_type = config.require('connection_type') %}
+  {% set connection_options = config.require('connection_options') %}
+  {% set enriched_options = adapter.enrich_options(connection_options, connection_type, 'connection_options') %}
+  {% set enriched_editable_options = adapter.filter_options(enriched_options, 'editable') %}
+
+
+
   {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
@@ -14,15 +21,20 @@
   {{ run_hooks(pre_hooks, inside_transaction=False) }}
   {{ run_hooks(pre_hooks, inside_transaction=True) }}
 
+  {{ log("Options: " ~ connection_options ) }}
+  {{ log("Enriched options: " ~ enriched_options ) }}
+  {{ log("Enriched options: " ~ enriched_options ) }}
+
+
   {% if old_relation %}
-    {% call statement('main') -%}
+    {% call statement('main') %}
       ALTER {{ connection_type }} CONNECTION {{target_relation.identifier}}
-        SET COMMENT = '{{ curr_datetime }}';
+        {{ render_options(enriched_editable_options, 'alter') }}
     {%- endcall %}
   {% else %}
     {% call statement('main') -%}
       CREATE {{ connection_type }} CONNECTION {{target_relation.identifier}}
-      {{ sql }}
+        {{ render_options(enriched_options, 'create') }}
     {%- endcall %}
   {% endif %}
 

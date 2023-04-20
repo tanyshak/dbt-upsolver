@@ -1,22 +1,18 @@
-
 from dbt.adapters.sql import SQLAdapter as adapter_cls
-
 from dbt.adapters.upsolver import UpsolverConnectionManager
-
 from dbt.events import AdapterLogger
+from dbt.adapters.upsolver.relation import UpsolverRelation
+from typing import List
+from dbt.adapters.base.meta import available
+from dbt.adapters.upsolver.options.copy_options import Copy_options
+from dbt.adapters.upsolver.options.connection_options import Connection_options
+from dbt.adapters.upsolver.options.transformation_options import Transformation_options
+from dbt.adapters.upsolver.options.table_options import Table_options
+import agate
+import datetime
+import re
 
 logger = AdapterLogger("Upsolver")
-
-from dbt.adapters.upsolver.relation import UpsolverRelation
-
-import agate
-
-import datetime
-
-from typing import Any, List, Optional
-
-from dbt.adapters.base.meta import available
-
 LIST_RELATION_MACRO_NAME = "list_relation_without_caching"
 
 
@@ -36,7 +32,7 @@ class UpsolverAdapter(adapter_cls):
         return "datenow()"
 
     def debug_query(self) -> None:
-        self.execute('SELECT * FROM SystemTables.logs.task_executions limit 1;')
+        self.execute('SELECT * FROM logs.logs.task_executions limit 1;')
 
     def create_schema(self, relation: UpsolverRelation) -> None:
         pass
@@ -49,6 +45,64 @@ class UpsolverAdapter(adapter_cls):
         datetime_now = datetime.datetime.now()
         return 'Altered: ' + datetime_now.strftime('%Y-%m-%d %H:%M:%S')
 
+    @available
+    def get_connection_from_sql(self, sql):
+        connection_identifier = re.search('"(.*)"', sql).group().split('.')[2] \
+                                  .translate(str.maketrans({'\"':'', '\'':''}))
+
+        return connection_identifier
+
+    @available
+    def get_columns_names_with_types(self, list_dict):
+        res = []
+        for col in list_dict:
+            if col.get('type'):
+                res.append(f"{col['field']} {col['type']}")
+        return ', '.join(set(res))
+
+    @available
+    def get_columns_names(self, list_dict):
+        res = []
+        for col in list_dict:
+            res.append(col['field'])
+        return ', '.join(set(res))
+
+    @available
+    def separate_options(self, config_options, source):
+        job_options = self.enrich_options(config_options, source, 'job_options')
+        source_options = self.enrich_options(config_options, source, 'source_options')
+        return job_options, source_options
+
+    @available
+    def enrich_options(self, config_options, source, options_type):
+        options = self.get_options(source, options_type)
+        enriched_options = {}
+        for option, value in config_options.items():
+            find_value = options.get(option.lower(), None)
+            if find_value:
+                if options[option.lower()]['type'] == 'list' and isinstance(value, str):
+                    value = f"('{value}')"
+                enriched_options[option] = find_value
+                enriched_options[option]['value'] = value
+            else:
+                logger.warning(f"Options not found: {option}")
+        return enriched_options
+
+    @available
+    def filter_options(self, options, parametr):
+        editable = {key:val for key, val in options.items() if val[parametr] == True}
+        return editable
+
+    def get_options(self, source, options_type):
+        if options_type == 'connection_options':
+            options = Connection_options[source.lower()]
+        elif options_type == 'transformation_options':
+            options = Transformation_options[source.lower()]
+        elif options_type == 'table_options':
+            options = Table_options
+        else:
+            options = Copy_options[source.lower()][options_type]
+        return options
 
     def list_relations_without_caching(
         self,

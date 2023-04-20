@@ -1,6 +1,7 @@
 {% materialization materializedview, adapter='upsolver' %}
   {%- set identifier = model['alias'] -%}
   {% set sync = config.get('sync', '') %}
+  {% set options = config.require('options') %}
   {%- set curr_datetime = adapter.alter_datetime() -%}
 
   {%- set old_relation = adapter.get_relation(identifier=identifier,
@@ -17,12 +18,18 @@
     {% if old_relation %}
       {% call statement('main') -%}
         ALTER MATERIALIZED VIEW {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}}
-          SET COMMENT = '{{ curr_datetime }}';
+          {% for k, v in options.items() %}
+            SET {{k}} = {{v}}
+          {% endfor %}
       {%- endcall %}
     {% else %}
       {% call statement('main') -%}
         CREATE {{ sync }} MATERIALIZED VIEW  {{target_relation.database}}.{{target_relation.schema}}.{{target_relation.identifier}} AS
         {{ sql }}
+        {% for k, v in options.items() %}
+          SET {{k}} = {{v}}
+        {% endfor %}
+
       {%- endcall %}
     {% endif %}
 
