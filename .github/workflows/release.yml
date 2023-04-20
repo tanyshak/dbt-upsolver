@@ -1,8 +1,6 @@
 name: Release
 
 on: push
-  branches: [ new_syntax ]
-
 
 jobs:
   release:
