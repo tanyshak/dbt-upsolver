@@ -27,7 +27,7 @@ pip install upsolver-sdk-python
 ### 3. Install test dbt-upsolver adapter :
 
 ```sh
- pip install -i https://test.pypi.org/simple/ dbt-upsolver
+ pip install dbt-upsolver
 ```
 ### 4. Make sure the adapter is installed:
 ```sh
